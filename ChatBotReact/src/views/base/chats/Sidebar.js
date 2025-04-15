@@ -57,6 +57,7 @@ const styles = {
     width: "70px",
     alignItems: "center",
     borderRight: "1px solid #dee2e6",
+    border: "1px solid #dee2e6",  
   },
   navLogo: {
     width: "80%",

@@ -13,10 +13,10 @@
   "license": "MIT",
   "author": "The CoreUI Team (https://github.com/orgs/coreui/people)",
   "scripts": {
-  "build": "vite build",
-  "lint": "eslint",
-  "serve": "vite preview",
-  "start": "vite --host"
+    "build": "vite build",
+    "lint": "eslint",
+    "serve": "vite preview",
+    "start": "vite --host"
   },
   "dependencies": {
     "@coreui/chartjs": "^4.1.0",
@@ -38,6 +38,7 @@
     "core-js": "^3.40.0",
     "prop-types": "^15.8.1",
     "react": "^19.0.0",
+    "react-bootstrap": "^2.10.9",
     "react-dom": "^19.0.0",
     "react-icons": "^5.5.0",
     "react-redux": "^9.2.0",
