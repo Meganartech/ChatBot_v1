@@ -53,7 +53,7 @@ public class SecurityConfig {
             )
             .cors(cors -> cors.configurationSource(corsConfigurationSource())) // ✅ Corrected CORS
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class); // JWT Filter
-
+            
         return http.build();
     }
 

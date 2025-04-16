@@ -52,10 +52,10 @@ const _nav = [
     icon: <CIcon icon={cilDescription} customClassName="nav-icon" />,
   },
   {
-    component: CNavItem,
-    name: 'Channels',
-    href:'#',
-    icon: <CIcon icon={cilListRich} customClassName="nav-icon" />,
+          component: CNavItem,
+          name: 'Channels',
+          to: '/base/Channels',
+          icon: <CIcon icon={cilListRich} customClassName="nav-icon" />,
   },
   {
     component: CNavItem,

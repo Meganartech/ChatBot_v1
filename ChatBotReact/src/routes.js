@@ -3,7 +3,7 @@ import HomeScreen from './views/home/home'
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
 const Colors = React.lazy(() => import('./views/theme/colors/Colors'))
 const Typography = React.lazy(() => import('./views/theme/typography/Typography'))
-
+const Channels = React.lazy(() => import('./views/property/widgets/MainWidget'))
 // Base
 const Chats = React.lazy(() => import('./views/base/chats/chats'))
 
@@ -13,6 +13,7 @@ const routes = [
   { path: '/base/Compose', name: 'Theme', element: Colors },
   { path: '/base/Chats', name: 'Chats', element: Chats },
   { path: '/base/Ticket', name: 'Ticket', element: Typography },
+  { path: '/base/Channels', name: 'Channels', element: Channels },
   { path: '/base/addContact', name: 'Add Contact', element: Typography },
   { path: '/base/People', name: 'People', element: Typography },
   { path: '/base/Organization', name: 'Organization', element: Typography },
