@@ -34,8 +34,8 @@ public class PropertyController {
             @RequestParam("websiteURL") String websiteURL,
             @RequestParam("buttonColor") String buttonColor,
             @RequestParam(value = "widgetScript", required = false) String widgetScript,
-            @RequestParam("imageFile") MultipartFile imageFile) throws IOException, SQLException {
-
+            @RequestParam(value = "imageFile", required = false) MultipartFile imageFile) throws IOException, SQLException {
+        
         Property property = new Property();
         property.setPropertyName(propertyName);
         property.setWebsiteURL(websiteURL);
@@ -43,7 +43,7 @@ public class PropertyController {
         if (widgetScript != null) {
             property.setWidgetScript(widgetScript);
         }
-
+    
         return propertyService.addProperty(extractToken(token), property, imageFile);
     }
 

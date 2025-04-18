@@ -21,7 +21,7 @@ const Channels = () => {
   return (
     <div style={styles.adminContainer}>
       <WidgetSidebar />
-      {/* <WidgetBody /> */}
+      {/* <WidgetBody />   */}
       <ChatWidget />
       {/* <WidgetContent/> */}
     </div>
