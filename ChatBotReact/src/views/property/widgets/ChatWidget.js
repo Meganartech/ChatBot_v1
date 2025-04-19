@@ -1,23 +1,68 @@
-import { bottom, right } from "@popperjs/core";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const WidgetForm = () => {
   const [propertyName, setPropertyName] = useState("");
   const [websiteUrl, setWebsiteUrl] = useState("");
   const [widgetColor, setWidgetColor] = useState("#61a1d1");
+  const [scriptText, setScriptText] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [copySuccess, setCopySuccess] = useState(false);
 
-  const scriptText = `
-<!-- Start of Tawk.to Script -->
-<script type="text/javascript">
-var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-(function(){
-var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-s1.async=true;
-s1.src='https://embed.tawk.to/60e872719bd1f31184d8f638/1f0q5sz5ru';
-s1.charset='UTF-8';
-s0.parentNode.insertBefore(s1,s0);
-})();
-</script>`;
+  const isValidURL = (url) => /^http:\/\/[^"']+$/.test(url);
+
+  const generateWidget = async () => {
+    setErrorMessage("");
+    setScriptText("");
+  
+    if (!propertyName || !websiteUrl) {
+      setErrorMessage("Property Name and Website URL required.");
+      return;
+    }
+  
+    if (!isValidURL(websiteUrl)) {
+      setErrorMessage("Please enter a valid Website URL starting with http://");
+      return;
+    }
+  
+    setLoading(true);
+  
+    try {
+      const token = localStorage.getItem("token");
+      const formData = new FormData();
+      formData.append("propertyName", propertyName);
+      formData.append("websiteURL", websiteUrl);
+      formData.append("buttonColor", widgetColor);
+      // Note: No imageFile is being appended here
+  
+      const response = await fetch("http://localhost:8080/properties/add", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+  
+      const data = await response.json();
+      setLoading(false);
+  
+      if (response.ok) {
+        setScriptText(data.widgetScript);
+      } else {
+        setErrorMessage(data.message || "Something went wrong!");
+      }
+    } catch (error) {
+      setLoading(false);
+      setErrorMessage("Failed to generate widget. Try again later.");
+    }
+  };
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(scriptText).then(() => {
+      setCopySuccess(true);
+      setTimeout(() => setCopySuccess(false), 2000);
+    });
+  };
 
   return (
     <div className="container px-4 py-3" style={styles.container}>
@@ -54,41 +99,64 @@ s0.parentNode.insertBefore(s1,s0);
               <span style={styles.colorHex}>{widgetColor}</span>
             </div>
           </div>
-          <button style={styles.Generate}>Generate</button>
+
+          {errorMessage && <p className="text-danger">{errorMessage}</p>}
+
+          <button style={styles.Generate} onClick={generateWidget} disabled={loading}>
+            {loading ? "Generating..." : "Generate"}
+          </button>
         </div>
 
         <div className="col-md-6">
           <label style={styles.label}>Widget Code</label>
-          <pre style={styles.codeBox}>{scriptText}</pre>
+          <div className="position-relative">
+            <pre style={styles.codeBox}>{scriptText}</pre>
+            {scriptText && (
+              <button
+                onClick={copyToClipboard}
+                className="btn btn-sm btn-secondary position-absolute top-0 end-0 m-2"
+              >
+                Copy
+              </button>
+            )}
+          </div>
         </div>
       </div>
-      <div></div>
-      <hr ></hr>
-      <div className="d-flex justify-content-end mt-4" style={styles.actionButtons}>   
+      <hr />
+      <div className="d-flex justify-content-end mt-4" style={styles.actionButtons}>
         <button className="btn btn-light me-2">Cancel</button>
         <button className="btn" style={styles.Save}>Save</button>
       </div>
+
+      {/* Copy Notification */}
+      {copySuccess && (
+        <div
+          className="position-fixed bottom-0 end-0 m-4 bg-success text-white px-4 py-2 rounded shadow"
+          style={{ zIndex: 1050 }}
+        >
+          Copied to clipboard!
+        </div>
+      )}
     </div>
   );
 };
 
 const styles = {
-    Save: {
-        backgroundColor: "#5856d6",
-        color: "#fff",
-        padding: "5px 20px",
-        border: "none",
-        borderRadius: "6px",
-        cursor: "pointer",
-        fontSize: "14px",
-        fontWeight: "bold"
-    },
-    actionButtons: {
-        position: "absolute",
-        bottom: "12%",
-        right   : "5%",
-        
-    },
+  Save: {
+    backgroundColor: "#5856d6",
+    color: "#fff",
+    padding: "5px 20px",
+    border: "none",
+    borderRadius: "6px",
+    cursor: "pointer",
+    fontSize: "14px",
+    fontWeight: "bold",
+  },
+  actionButtons: {
+    position: "absolute",
+    bottom: "12%",
+    right: "5%",
+  },
   container: {
     background: "#f8f9fa",
     borderRadius: "8px",
@@ -96,12 +164,12 @@ const styles = {
   },
   title: {
     borderBottom: "1px solid #ccc",
-    paddingBottom: "10px"
+    paddingBottom: "10px",
   },
   label: {
     fontWeight: "500",
     marginBottom: "5px",
-    display: "block"
+    display: "block",
   },
   colorBoxContainer: {
     display: "flex",
@@ -110,18 +178,18 @@ const styles = {
     padding: "10px",
     border: "1px solid #ccc",
     borderRadius: "8px",
-    backgroundColor: "#fff"
+    backgroundColor: "#fff",
   },
   colorBox: {
     width: "40px",
     height: "40px",
     border: "none",
     borderRadius: "6px",
-    cursor: "pointer"
+    cursor: "pointer",
   },
   colorHex: {
     fontSize: "14px",
-    color: "#333"
+    color: "#333",
   },
   codeBox: {
     backgroundColor: "#e6f0ec",
@@ -131,18 +199,19 @@ const styles = {
     height: "200px",
     whiteSpace: "pre-wrap",
     fontSize: "12px",
-    color: "#333"
+    color: "#333",
+    overflow: "auto",
   },
-    Generate: {
-        backgroundColor: "#74b047",
-        color: "#fff",
-        padding: "8px 20px",
-        border: "none",
-        borderRadius: "6px",
-        cursor: "pointer",
-        fontSize: "14px",
-        fontWeight: "bold"
-    }
+  Generate: {
+    backgroundColor: "#74b047",
+    color: "#fff",
+    padding: "8px 20px",
+    border: "none",
+    borderRadius: "6px",
+    cursor: "pointer",
+    fontSize: "14px",
+    fontWeight: "bold",
+  },
 };
 
 export default WidgetForm;
