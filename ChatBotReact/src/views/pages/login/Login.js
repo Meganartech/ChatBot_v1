@@ -18,6 +18,7 @@ import { cilLockLocked, cilUser } from '@coreui/icons'
 import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { FaEye, FaEyeSlash } from 'react-icons/fa'
+import axios from "axios";
 
 const Login = () => {
   const [email, setEmail] = useState('')
@@ -30,40 +31,44 @@ const Login = () => {
       toast.error('All fields are required!')
       return
     }
-
+  
     try {
-      const response = await fetch('http://localhost:8080/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+      const response = await axios.post('http://localhost:8080/chatbot/login', {
+        email,
+        password,
       })
-
-      const data = await response.json()
-
-      if (response.ok && data.token) {
+  
+      const data = response.data // Axios puts JSON response in `data`
+      console.log(data)
+  
+      if (data.token) {
         toast.success('Login successful!')
-        localStorage.setItem('token', data.token)
-        console.log('Token ID:', data.token)
-
-        const adminDetails = {
-          id: data.id,
-          name: data.name,
-          email: data.email,
-          chatbotType: data.chatbot_type,
-        }
-
-        localStorage.setItem('admin', JSON.stringify(adminDetails))
-        navigate('/home')
+        sessionStorage.setItem('token', data.token)
+        sessionStorage.setItem('name',data.name)
+        sessionStorage.setItem('email',data.email)
+        sessionStorage.setItem('userid',data.userId)
+        sessionStorage.setItem('role',data.role)
+  
+        // const adminDetails = {
+        //   id: data.userId, // Make sure the keys match what your backend sends
+        //   name: data.name,
+        //   email: data.email,
+        //   role:data.role,
+        // }
+  
+        // sessionStorage.setItem('admin', JSON.stringify(adminDetails))
+        navigate('/') 
       } else {
         toast.error(data.message || 'Invalid email or password!')
       }
-    } 
-    catch (error) {
+    } catch (error) {
       toast.error('Login failed! Please try again.')
       console.error('Login Error:', error)
     }
   }
-
+  
+  
+  
   return (
     <div className="bg-body-tertiary min-vh-100 d-flex flex-row align-items-center">
       <CContainer>

@@ -58,35 +58,35 @@ const AppHeader = () => {
   }, [])
 
   // Token Validation
-  useEffect(() => {
-    const token = localStorage.getItem('token')
-    if (!token) return navigate('/login')
+  // useEffect(() => {
+  //   const token = localStorage.getItem('token')
+  //   if (!token) return navigate('/login')
 
-    const validateToken = async () => {
-      try {
-        const res = await fetch('http://localhost:8080/auth/validate', {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        const data = await res.json()
-        if (data.status !== 'success') {
-          toast.error("Session expired. Please login again.")
-          localStorage.removeItem("token")
-          localStorage.removeItem("admin")
-          navigate('/login')
-        }
-      } catch (err) {
-        toast.error("Session validation failed!")
-        navigate('/login')
-      }
-    }
+  //   const validateToken = async () => {
+  //     try {
+  //       const res = await fetch('http://localhost:8080/auth/validate', {
+  //         method: 'POST',
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       })
+  //       const data = await res.json()
+  //       if (data.status !== 'success') {
+  //         toast.error("Session expired. Please login again.")
+  //         localStorage.removeItem("token")
+  //         localStorage.removeItem("admin")
+  //         navigate('/login')
+  //       }
+  //     } catch (err) {
+  //       toast.error("Session validation failed!")
+  //       navigate('/login')
+  //     }
+  //   }
 
-    validateToken()
-    const interval = setInterval(validateToken, 30000)
-    return () => clearInterval(interval)
-  }, [location])
+  //   validateToken()
+  //   const interval = setInterval(validateToken, 30000)
+  //   return () => clearInterval(interval)
+  // }, [location])
 
   const handleLogout = async () => {
     try {

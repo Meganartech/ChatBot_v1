@@ -40,89 +40,93 @@ const Register = () => {
   const navigate = useNavigate();
 
   const handleRegister = async () => {
-    if (!name || !email || !password || !repeatPassword || !chatbotType) {
+    if (!name || !email || !password || !repeatPassword) {
       toast.dismiss();
       toast.error("All fields are required!");
       return;
     }
-
+  
     if (password !== repeatPassword) {
       toast.dismiss();
       toast.error("Passwords do not match!");
       return;
     }
-
+  
     try {
-      const response = await axios.post("http://localhost:8080/auth/register", {
-        name,
-        email,
-        password,
-        chatbotType,
+      const formData = new FormData();
+      formData.append("username", name); // match backend param
+      formData.append("email", email);
+      formData.append("password", password);
+      // formData.append("role", role); // optional if needed
+  
+      const response = await axios.post("http://localhost:8080/chatbot/register", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
-
-      if (response.data.status === "success") {
-        toast.success(response.data.message);
-        setShowOtpModal(true);
-        setOtp("");
-      } else {
-        toast.error(response.data.message || "Registration failed!");
-      }
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Error registering user!");
-    }
-  };
-
-  const handleVerifyOtp = async () => {
-    if (!otp) {
-      toast.error("Enter OTP!");
-      return;
-    }
-
-    setIsVerifying(true);
-
-    try {
-      const response = await axios.post("http://localhost:8080/auth/verify", {
-        email,
-        otp,
-        chatbotType,
-      });
-
-      if (response.data.status === "success") {
-        toast.success(response.data.message);
-        setShowOtpModal(false);
+  
+      if (response.status === 200) {
+        toast.success("User registered successfully");
         navigate("/login");
       } else {
-        toast.error(response.data.message || "Invalid OTP or OTP Expired!");
+        toast.error(response.data || "Registration failed!");
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || "Error verifying OTP!");
-    } finally {
-      setIsVerifying(false);
+      toast.error(error.response?.data || "Error registering user!");
     }
   };
 
-  const handleResendOtp = async () => {
-    if (isResending) return;
+  // const handleVerifyOtp = async () => {
+  //   if (!otp) {
+  //     toast.error("Enter OTP!");
+  //     return;
+  //   }
 
-    setIsResending(true);
+  //   setIsVerifying(true);
 
-    try {
-      const response = await axios.post("http://localhost:8080/auth/resend", {
-        email,
-      });
+  //   try {
+  //     const response = await axios.post("http://localhost:8080/auth/verify", {
+  //       email,
+  //       otp,
+  //       chatbotType,
+  //     });
 
-      if (response.data.status === "success") {
-        toast.success("New OTP sent to your email!");
-        setOtp("");
-      } else {
-        toast.error("Failed to resend OTP!");
-      }
-    } catch (error) {
-      toast.error("Error resending OTP!");
-    } finally {
-      setTimeout(() => setIsResending(false), 10000);
-    }
-  };
+  //     if (response.data.status === "success") {
+  //       toast.success(response.data.message);
+  //       setShowOtpModal(false);
+  //       navigate("/login");
+  //     } else {
+  //       toast.error(response.data.message || "Invalid OTP or OTP Expired!");
+  //     }
+  //   } catch (error) {
+  //     toast.error(error.response?.data?.message || "Error verifying OTP!");
+  //   } finally {
+  //     setIsVerifying(false);
+  //   }
+  // };
+
+  // const handleResendOtp = async () => {
+  //   if (isResending) return;
+
+  //   setIsResending(true);
+
+  //   try {
+  //     const response = await axios.post("http://localhost:8080/auth/resend", {
+  //       email,
+  //     });
+
+  //     if (response.data.status === "success") {
+  //       toast.success("New OTP sent to your email!");
+  //       setOtp("");
+  //     } else {
+  //       toast.error("Failed to resend OTP!");
+  //     }
+  //   } catch (error) {
+  //     toast.error("Error resending OTP!");
+  //   } finally {
+  //     setTimeout(() => setIsResending(false), 10000);
+  //   }
+  // };
 
   return (
     <div className="bg-body-tertiary min-vh-100 d-flex flex-row align-items-center">
@@ -186,7 +190,7 @@ const Register = () => {
                     />
                   </CInputGroup>
 
-                  <CFormSelect
+                  {/* <CFormSelect
                     className="mb-3"
                     value={chatbotType}
                     onChange={(e) => setChatbotType(e.target.value)}
@@ -197,13 +201,12 @@ const Register = () => {
                         {opt.label}
                       </option>
                     ))}
-                  </CFormSelect>
+                  </CFormSelect> */}
 
                   <div className="d-grid">
                     <CButton color="success" onClick={handleRegister}>
                       Create Account
-                    </CButton>
-                    
+                    </CButton>  
                   </div>
                   <div className="text-center mt-3"></div>
                     <p>
@@ -219,7 +222,7 @@ const Register = () => {
         </CRow>
       </CContainer>
 
-      {/* OTP Modal */}
+      {/* OTP Modal
       {showOtpModal && (
         <div className="modal-backdrop show d-flex justify-content-center align-items-center">
           <div className="bg-white p-4 rounded shadow" style={{ width: "350px" }}>
@@ -249,7 +252,7 @@ const Register = () => {
             </div>
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 };
