@@ -136,7 +136,6 @@ const WidgetBody = () => {
       border:"1px solid black",
       borderRadius: "5px",
       width: "100px",
-      width: "100px",
     },
     saveButton: {
       color:"white",
