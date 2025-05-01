@@ -148,7 +148,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 
 // Component Views
-import Overview from '../views/Overview/Overview'
+// import Overview from '../views/Overview/Overview'
 import WidgetBody from '../views/property/widgets/WidgetBody'
 import ChatWidget from '../views/property/widgets/ChatWidget';
 import Members from '../views/UserManagement/Members'
