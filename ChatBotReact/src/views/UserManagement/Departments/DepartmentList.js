@@ -117,52 +117,55 @@ const DepartmentList = ({refreshDepartment,departments,token,onAddDepClick,Edit}
             </CTableRow>
           </CTableHead>
           
-                          <CTableBody>
-                            {departments.map((dep) => (
-                              <CTableRow key={dep.id}>
-                                <CTableHeaderCell scope="row">
-            <input
-              type="checkbox"
-              checked={selectedDep.includes(dep.id)}
-              onChange={() => handleRowCheckboxChange(dep.id)}
-            
-            />
-          </CTableHeaderCell>
-          
-                                <CTableDataCell>
-                                    {dep.depName}
-                                </CTableDataCell>
-                                <CTableDataCell>{dep.description}</CTableDataCell>
-                                <CTableDataCell style={{textAlign:'center'}}>
-                                  {dep.memberCount}
-                                </CTableDataCell>
-          
-                                <CTableDataCell>
-                                    <FaEdit
-                                      className="me-2 p-2"
-                                      style={{
-                                        backgroundColor: '#93BF42',
-                                        color: 'white',
-                                        fontSize: '30px', // Adjust the font size here
-                                        borderRadius:'2px',
-                                      }}
-                                      onClick={()=>Edit(dep.id)}
-                                    />
-                                    <FaTrash 
-                                      className="me-1 p-2"
-                                      style={{
-                                        backgroundColor:'#F42A2A',
-                                        color:'white',
-                                        fontSize:'30px',
-                                        borderRadius:'2px',
-                                      }}
-                                      onClick={() =>handleDelete(dep.id)} 
-                                     /> 
-                                </CTableDataCell>
-          
-                              </CTableRow>
-                            ))}
-                          </CTableBody>
+          <CTableBody>
+  {departments && departments.length > 0 ? (
+    departments.map((dep) => (
+      <CTableRow key={dep.id}>
+        <CTableHeaderCell scope="row">
+          <input
+            type="checkbox"
+            checked={selectedDep.includes(dep.id)}
+            onChange={() => handleRowCheckboxChange(dep.id)}
+          />
+        </CTableHeaderCell>
+
+        <CTableDataCell>{dep.depName}</CTableDataCell>
+        <CTableDataCell>{dep.description}</CTableDataCell>
+        <CTableDataCell style={{ textAlign: 'center' }}>{dep.memberCount}</CTableDataCell>
+
+        <CTableDataCell>
+          <FaEdit
+            className="me-2 p-2"
+            style={{
+              backgroundColor: '#93BF42',
+              color: 'white',
+              fontSize: '30px',
+              borderRadius: '2px',
+            }}
+            onClick={() => Edit(dep.id)}
+          />
+          <FaTrash
+            className="me-1 p-2"
+            style={{
+              backgroundColor: '#F42A2A',
+              color: 'white',
+              fontSize: '30px',
+              borderRadius: '2px',
+            }}
+            onClick={() => handleDelete(dep.id)}
+          />
+        </CTableDataCell>
+      </CTableRow>
+    ))
+  ) : (
+    <CTableRow>
+      <CTableDataCell colSpan="5" className="text-center">
+        No departments available.
+      </CTableDataCell>
+    </CTableRow>
+  )}
+</CTableBody>
+
           
                         </CTable>
                 </CCardBody>

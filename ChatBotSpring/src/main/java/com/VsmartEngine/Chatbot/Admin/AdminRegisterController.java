@@ -18,6 +18,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -205,37 +206,6 @@ public class AdminRegisterController {
 	                             .body("{\"message\": \"An error occurred while deleting the admin.\"}");
 	    }
 	}
-
-
-
-//	public ResponseEntity<String> delete(
-//	        @RequestHeader("Authorization") String token, 
-//	        @PathVariable Long id
-//	) {
-//	    try {
-//	        // Extract role from the token
-//	        String role = jwtUtil.getRoleFromToken(token);
-//	        System.out.println("role: " + role);
-//
-//	        // Check if the role is "ADMIN"
-//	        if (!"ADMIN".equals(role)) {
-//	            // Return a Forbidden response if the role is not "ADMIN"
-//	            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-//	                                 .body("{\"message\": \"Only admin can delete subadmin\"}");
-//	        }
-//
-//	        // Perform the delete operation if the role is "ADMIN"
-//	        adminregisterrepository.deleteById(id);
-//
-//	        // Return a success message with 204 status
-//	        return ResponseEntity.status(HttpStatus.NO_CONTENT)
-//	                             .body("{\"message\": \"Admin deleted successfully\"}");
-//	    } catch (Exception e) {
-//	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-//	                             .body("{\"message\": \"An error occurred while deleting the admin.\"}");
-//	    }
-//	}
-	
 	
 	@PostMapping("/invite")
     public ResponseEntity<String> sendInvitation(@RequestParam String email, @RequestParam String role,@RequestHeader("Authorization") String token) {
@@ -309,6 +279,70 @@ public class AdminRegisterController {
 	        return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
+	
+	
+	@GetMapping("/getAdminbyid/{id}")
+	 public ResponseEntity<AdminRegister> getUserById(@PathVariable Long id) {
+	        Optional<AdminRegister> userOptional = adminregisterrepository.findById(id);
+	        if (userOptional.isPresent()) {
+	        	AdminRegister user = userOptional.get();
+	            return ResponseEntity.ok(user);
+	        } else {
+	            return ResponseEntity.notFound().build();
+	        }
+	 }
+	
+	@PatchMapping("/updateAdmin/{id}")
+	public ResponseEntity<?> updateAdmin(@RequestHeader("Authorization") String token,
+	                                     @PathVariable Long id,
+	                                     @RequestParam("email") String email,
+	                                     @RequestParam("role") String role) {
+	    try {
+	        String roles = jwtUtil.getRoleFromToken(token);
+	        if (!"ADMIN".equals(roles)) {
+	            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("{\"message\": \"Only admin can update\"}");
+	        }
+	        Optional<AdminRegister> optionalAdmin = adminregisterrepository.findById(id);
+	        if (optionalAdmin.isEmpty()) {
+	            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+	                    .body("{\"message\": \"admin or agent not found\"}");
+	        }
 
+	        // 🔍 Check if email is already used by another user
+	        Optional<AdminRegister> emailExists = adminregisterrepository.findByEmail(email);
+	       // Option 1: Use != for primitive comparison
+	        if (emailExists.isPresent() && emailExists.get().getId() != id) {
+	            return ResponseEntity.status(HttpStatus.CONFLICT)
+	                    .body("{\"message\": \"Email is already registered\"}");
+	        }
+
+	        Role userRole = rolerepository.findByRole(role.toUpperCase())
+	                .orElseThrow(() -> new RuntimeException("Role '" + role.toUpperCase() + "' not found"));
+
+	        AdminRegister adminregister = optionalAdmin.get();
+	        if (adminregister.isStatus()) {
+	            return ResponseEntity.ok().body("{\"message\": \"No need to update\"}");
+	        } else {
+	            adminregister.setEmail(email);
+	            adminregister.setRole(userRole);
+	            adminregister.setStatus(false);
+	            adminregister.setCode(UUID.randomUUID().toString());
+
+	            String link = "http://localhost:3000/#/register?token=" + adminregister.getCode();
+	            String subject = "You have been invited to join";
+	            String body = "Hi,\n\nYou have been invited to join. Click the link below to register:\n\n" +
+	                          link + "\n\n-chatbot Team";
+
+	            emailservice.sendEmail(email, subject, body);
+	            adminregisterrepository.save(adminregister);
+	        }
+
+	        return ResponseEntity.ok().body("{\"message\": \"Department updated successfully\"}");
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+	                .body("{\"message\": \"Error while updating department\"}");
+	    }
+	}
 
 }

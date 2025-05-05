@@ -1,15 +1,78 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { CCardHeader, CCardBody, CTable, CTableHead, CTableRow, CTableHeaderCell, CTableBody, CTableDataCell, CButton, CRow, CCol, CInputGroup, CInputGroupText, CFormInput } from '@coreui/react';
-import { FaSearch, FaPlus, FaEdit, FaTrash } from 'react-icons/fa';
+import {FaPlus,FaTrash } from 'react-icons/fa';
+import axios from 'axios';
 
 
-const AddMember = ({rows, setRows, token,onCancel,editId}) => {
+const AddMember = ({rows, setRows, token,onCancel,editUserId}) => {
 
-  console.log("editID",editId)
+  console.log("editID",editUserId)
+
+  const [editRow, setEditRow] = useState(null);
+
+  console.log(token)
+
+
+  useEffect(() => {
+    if (editUserId) {
+      fetchAdmin(editUserId);
+    }
+  }, [editUserId]);
+  
+  const fetchAdmin = async (editUserId) => {
+    try {
+      const response = await axios.get(`http://localhost:8080/chatbot/getAdminbyid/${editUserId}`);
+      const data = response.data;
+      setEditRow({
+        email: data.email,
+        role: data.role.role,
+        status:data.status,
+      });
+    } catch (error) {
+      console.error('Error fetching admin:', error);
+      alert('Failed to load admin for editing.');
+    }
+  };
+  
+  console.log("editrow",editRow)
+
+  const handleUpdateAdmin = async () => {
+    if (!editRow.email || !editRow.role) {
+      alert("Email and role are required.");
+      return;
+    }
+  
+    try {
+      const response = await fetch(`http://localhost:8080/chatbot/updateAdmin/${editUserId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          Authorization: token,
+        },
+        body: new URLSearchParams({
+          email: editRow.email,
+          role: editRow.role,
+        }),
+      });
+  
+      const result = await response.text();
+  
+      if (!response.ok) {
+        alert(`Failed to update: ${result}`);
+      } else {
+        alert("Admin updated successfully!");
+        onCancel(); // You can use this to close the edit form
+      }
+    } catch (error) {
+      console.error("Error updating admin:", error);
+      alert("Error while updating admin.");
+    }
+  };
+  
 
     const handleAddRow = () => {
-            setRows([...rows, { email: '', role: '' }])
-          }
+      setRows([...rows, { email: '', role: '' }])
+    }
         
     const handleDeleteRow = (index) => {
         const updated = [...rows]
@@ -17,40 +80,42 @@ const AddMember = ({rows, setRows, token,onCancel,editId}) => {
         setRows(updated)
     }
 
+    
+
     const handleSendInvitations = async () => {
-            for (const row of rows) {
-              if (!row.email || !row.role) {
-                alert("Please enter both email and role for all rows.");
-                return;
-              }
+      for (const row of rows) {
+        if (!row.email || !row.role) {
+          alert("Please enter both email and role for all rows.");
+          return;
+        }
+        try {
+          const response = await fetch("http://localhost:8080/chatbot/invite", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+              Authorization: token,
+            },
+            body: new URLSearchParams({
+              email: row.email,
+              role: row.role,
+            }),
+          });
           
-              try {
-                const response = await fetch("http://localhost:8080/chatbot/invite", {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/x-www-form-urlencoded",
-                    Authorization: token,
-                  },
-                  body: new URLSearchParams({
-                    email: row.email,
-                    role: row.role,
-                  }),
-                });
-          
-                const result = await response.text();
-                if (!response.ok) {
-                  alert(`Failed to invite ${row.email}: ${result}`);
-                } else {
-                  console.log(`Invitation sent to ${row.email}`);
-                }
-              } catch (error) {
-                console.error("Error sending invitation:", error);
-                alert(`Error sending to ${row.email}`);
-              }
-            }
-          
-            alert("Invitations sent!");
-          };
+          const result = await response.text();
+          if (!response.ok) {
+            alert(`Failed to invite ${row.email}: ${result}`);
+          } else {
+            console.log(`Invitation sent to ${row.email}`);
+          }
+        } catch (error) {
+          console.error("Error sending invitation:", error);
+          alert(`Error sending to ${row.email}`);
+        }
+      }
+      alert("Invitations sent!");
+    };
+
+    
         
   return (
    <>
@@ -69,11 +134,54 @@ const AddMember = ({rows, setRows, token,onCancel,editId}) => {
            <CTableHeaderCell scope="col" style={{ backgroundColor: '#F3F4F7', width: '40%' }}>
              Role
            </CTableHeaderCell>
-           <CTableHeaderCell scope="col" style={{ backgroundColor: '#F3F4F7' }}>
+           {editUserId ? (<CTableHeaderCell scope="col" style={{ backgroundColor: '#F3F4F7' }}>
+            </CTableHeaderCell>):
+           (<CTableHeaderCell scope="col" style={{ backgroundColor: '#F3F4F7' }}>
              Action
-           </CTableHeaderCell>
+           </CTableHeaderCell>)}
          </CTableRow>
        </CTableHead>
+       {editUserId ? (
+  <CTableBody>
+    <CTableRow>
+      <CTableDataCell>
+        <CFormInput
+          type="email"
+          placeholder="Enter the email address"
+          style={{ width: '90%' }}
+          value={editRow?.email || ''}
+          onChange={(e) => setEditRow({ ...editRow, email: e.target.value })}
+        />
+      </CTableDataCell>
+      <CTableDataCell>
+        <div className="d-flex gap-4">
+          <div>
+            <input
+              type="radio"
+              value="ADMIN"
+              checked={editRow?.role === 'ADMIN'}
+              onChange={(e) => setEditRow({ ...editRow, role: e.target.value })}
+            />
+            <label className="ms-2">Admin</label>
+          </div>
+          <div>
+            <input
+              type="radio"
+              value="AGENT"
+              checked={editRow?.role === 'AGENT'}
+              onChange={(e) => setEditRow({ ...editRow, role: e.target.value })}
+            />
+            <label className="ms-2">Agent</label>
+          </div>
+        </div>
+      </CTableDataCell>
+     
+      <CTableDataCell>
+
+      </CTableDataCell>
+    </CTableRow>
+  </CTableBody>
+) : (
        <CTableBody>
          {rows.map((row, index) => (
           <CTableRow key={index}>
@@ -144,14 +252,17 @@ const AddMember = ({rows, setRows, token,onCancel,editId}) => {
           </CTableRow>
         ))}
       </CTableBody>
+       )}
     </CTable>
 
+    {!editUserId &&(
     <div className="d-flex justify-content-end mt-3">
       <CButton style={{ backgroundColor: '#F3F4F7', border: '1px solid black' }} onClick={handleAddRow}>
         <FaPlus className="me-2" />
         Add Another
       </CButton>
     </div>
+    )}
   </div>
 
   <hr/>
@@ -164,12 +275,23 @@ const AddMember = ({rows, setRows, token,onCancel,editId}) => {
     >
       Cancel
     </CButton>
+    {editUserId ? (
+   <CButton
+   style={{ backgroundColor: '#5856D6', color: '#FFFFFF' }}
+   disabled={editRow?.status === true}
+   onClick={handleUpdateAdmin}
+ >
+   Resend
+ </CButton>
+ 
+    ):(
     <CButton
       style={{ backgroundColor: '#5856D6', color: '#FFFFFF' }}
       onClick={handleSendInvitations}
     >
-      Send 
+      Send
     </CButton>
+    )}
   </div>
 
 </CCardBody>

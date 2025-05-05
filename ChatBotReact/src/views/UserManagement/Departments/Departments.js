@@ -55,8 +55,6 @@ const Departments = () => {
     }
   }, [location]);
 
- 
-
   return (
     <>
     {isOpenAddDep || editDepId ? (

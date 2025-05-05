@@ -113,7 +113,8 @@ const MemberList = ({ admins, token, onAddMemberClick, refreshAdmins,Edit }) => 
 </CTableHead>
 
                 <CTableBody>
-                  {admins.map((admin) => (
+                {admins && admins.length > 0 ? (
+                  admins.map((admin) => (
                     <CTableRow key={admin.id}>
                       <CTableHeaderCell scope="row">
   <input
@@ -161,8 +162,15 @@ const MemberList = ({ admins, token, onAddMemberClick, refreshAdmins,Edit }) => 
                       </CTableDataCell>
 
                     </CTableRow>
-                  ))}
-                </CTableBody>
+                    ))
+                  ) : (
+                      <CTableRow>
+                        <CTableDataCell colSpan="5" className="text-center">
+                          No departments available.
+                        </CTableDataCell>
+                      </CTableRow>
+                    )}
+                    </CTableBody>
 
               </CTable>
       </CCardBody>

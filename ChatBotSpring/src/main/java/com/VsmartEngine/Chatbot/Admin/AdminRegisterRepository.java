@@ -20,4 +20,5 @@ public interface AdminRegisterRepository extends JpaRepository<AdminRegister,Lon
 	List<AdminUserDto> findAllUserIdAndUsername();
 
 	
+	
 }

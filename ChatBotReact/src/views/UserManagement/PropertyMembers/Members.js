@@ -47,8 +47,10 @@ console.log('admin',editId)
         <AddMember
           rows={rows}
           setRows={setRows}
+          // admins={admins}
+          // setAdmins={setAdmins}
           token={token}
-          editId={editId}
+          editUserId={editId}
           onCancel={() => {
              setIsOpenAddMember(false);
              setEditId(undefined)
