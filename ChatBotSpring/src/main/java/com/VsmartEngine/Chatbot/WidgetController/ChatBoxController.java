@@ -231,7 +231,11 @@ public class ChatBoxController {
 		    <div class="input-group mb-4">
 		        <span class="input-group-text"><i class="fa fa-user"></i></span>
 		        <input type="text" id="register-username" class="form-control" placeholder="Username">
-		    </div>
+		    </div> 
+            <div class="input-group mb-4">
+		        <span class="input-group-text"><i class="fa fa-envelope"></i></span>
+		        <input type="text" id="register-email" class="form-control" placeholder="Email ID">
+		    </div> 
 		    <div class="input-group mb-4">
 		        <span class="input-group-text"><i class="fa fa-lock"></i></span>
 		        <input type="password" id="register-password" class="form-control" placeholder="Password">
@@ -300,9 +304,10 @@ public class ChatBoxController {
         // Register Button Event
         document.getElementById("register-btn").addEventListener("click", function () {
             const username = document.getElementById("register-username").value.trim();
+            const email = document.getElementById("register-email").value.trim();
             const password = document.getElementById("register-password").value.trim();
 
-            if (!username || !password) {
+            if (!username || !password || !email) {
                 displayMessage("register-message", "All fields are required!", "error");
                 return;
             }
@@ -310,13 +315,13 @@ public class ChatBoxController {
             fetch("http://localhost:8080/user/auth/register", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username, password, propertyId })
+                body: JSON.stringify({ username,email, password, propertyId })
             })
             .then(response => response.json())
             .then(data => {
                 if (data.status === "success") {
                     displayMessage("register-message", "Registration Successful!", "success");
-                    clearForm("register-username", "register-password");
+                    clearForm("register-username","register-email", "register-password");
                 } else {
                     displayMessage("register-message", data.message, "error");
                 }

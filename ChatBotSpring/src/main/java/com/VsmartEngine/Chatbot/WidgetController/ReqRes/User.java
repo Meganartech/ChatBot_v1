@@ -22,6 +22,9 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+	@Column(nullable = false, unique = true)
+	private String email;
+
     @ManyToOne
     @JoinColumn(name = "property_id", nullable = false)
     private Property property;
@@ -57,6 +60,11 @@ public class User {
 	public void setProperty(Property property) {
 		this.property = property;
 	}
-    
+   public String getEmail() {
+		return email;
+		}
+	public void setEmail(String email) {
+		this.email = email;
+	}
     
 }
