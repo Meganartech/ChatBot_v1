@@ -1,12 +1,22 @@
 package com.VsmartEngine.Chatbot.Admin;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.VsmartEngine.Chatbot.Departments.Department;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -32,13 +42,21 @@ public class AdminRegister {
 
 	@Column(name="status")
     private boolean status;
+	
+	@Column(name="uniquecode")
+	private String code;
+	
+	@ManyToMany(mappedBy = "admins")
+	@JsonBackReference
+	private List<Department> departments = new ArrayList<>();
 
 	public AdminRegister() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public AdminRegister(long id, String username, String email, String password, Role role, Boolean status) {
+	public AdminRegister(long id, String username, String email, String password, Role role, boolean status,
+			String code, List<Department> departments) {
 		super();
 		this.id = id;
 		this.username = username;
@@ -46,6 +64,8 @@ public class AdminRegister {
 		this.password = password;
 		this.role = role;
 		this.status = status;
+		this.code = code;
+		this.departments = departments;
 	}
 
 	public long getId() {
@@ -94,6 +114,22 @@ public class AdminRegister {
 
 	public void setStatus(boolean status) {
 		this.status = status;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public List<Department> getDepartments() {
+		return departments;
+	}
+
+	public void setDepartments(List<Department> departments) {
+		this.departments = departments;
 	}
 	
 }

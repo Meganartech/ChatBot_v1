@@ -3,10 +3,12 @@ package com.VsmartEngine.Chatbot.Admin;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,14 +16,22 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.VsmartEngine.Chatbot.Departments.Department;
+import com.VsmartEngine.Chatbot.Departments.DepartmentRepository;
 import com.VsmartEngine.Chatbot.MailConfiguration.EmailService;
 import com.VsmartEngine.Chatbot.TokenGeneration.JwtUtil;
+
+import jakarta.transaction.Transactional;
 
 @CrossOrigin()
 @RequestMapping("/chatbot")
@@ -32,6 +42,9 @@ public class AdminRegisterController {
 	private AdminRegisterRepository adminregisterrepository;
 	
 	@Autowired
+	private DepartmentRepository departmentrepository;
+	
+	@Autowired
 	private JwtUtil jwtUtil;
 	
 	@Autowired
@@ -39,139 +52,6 @@ public class AdminRegisterController {
 	
 	@Autowired
 	private EmailService emailservice;
-	
-	
-//	@PostMapping("/register")
-//    public ResponseEntity<?> register(@RequestParam("username") String username,
-//                                           @RequestParam("email") String email,
-//                                           @RequestParam("password") String password,
-//                                           @RequestParam(value="role",required=false) String role,
-//                                           Principal principal) {
-//        try {
-//            long count = adminregisterrepository.count();
-//
-//            //  If users already exist, only ADMIN can register new users
-//            if (count > 0) {
-//                if (principal == null) {
-//                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
-//                }
-//
-//                Optional<AdminRegister> requestingUserOpt = adminregisterrepository.findByEmail(principal.getName());
-//                if (requestingUserOpt.isEmpty() || 
-//                    !requestingUserOpt.get().getRole().equalsIgnoreCase("ADMIN")) {
-//                    return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Only Admin can add new users");
-//                }
-//            }
-//
-//            //  Check if the email is already registered
-//            Optional<AdminRegister> existingUser = adminregisterrepository.findByEmail(email);
-//            if (existingUser.isPresent()) {
-//                return ResponseEntity.badRequest().body("Email is already registered.");
-//            }
-//
-//            //  Encrypt password
-//            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-//            String encodedPassword = passwordEncoder.encode(password);
-//
-//            //  Create new user object
-//            AdminRegister newUser = new AdminRegister();
-//            newUser.setUsername(username);
-//            newUser.setEmail(email);
-//            newUser.setPassword(encodedPassword);
-//
-//            //  First user becomes ADMIN automatically
-//            if (count == 0) {
-//                newUser.setRole("ADMIN");
-//            } else {
-//                // Optionally validate role input here (ADMIN or AGENT)
-//                newUser.setRole(role.toUpperCase());
-//            }
-//
-//            // 💾 Save to database
-//            adminregisterrepository.save(newUser);
-//            return ResponseEntity.ok("User registered successfully");
-//
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
-//        }
-//    }
-// 
-//	@PostMapping("/login")
-//	public ResponseEntity<?> AdminLogin(@RequestBody Map<String, String> loginRequest){
-//		try {
-//	        String email = loginRequest.get("email");
-//	        String password = loginRequest.get("password");
-//	        Optional<AdminRegister> admin = adminregisterrepository.findByEmail(email);
-//	        if (!admin.isPresent()) {
-//	            // User with the provided email doesn't exist
-//	            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{\"message\": \"User not found\"}");
-//	        }
-//	        AdminRegister adminregister = admin.get();
-//	        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-//	        
-//	        if (!passwordEncoder.matches(password, adminregister.getPassword())) {
-//	            // Incorrect password
-//	            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("{\"message\": \"Incorrect password\"}");
-//	        }
-//	        String role = adminregister.getRole();
-//	        String jwtToken = jwtUtil.generateToken(email,role);
-//	        Map<String, Object> responseBody = new HashMap<>();
-//	        responseBody.put("token", jwtToken);
-//	        responseBody.put("message", "Login successful");
-//	        responseBody.put("name", adminregister.getUsername());
-//	        responseBody.put("email", adminregister.getEmail());
-//	        responseBody.put("userId", adminregister.getId());
-//	        responseBody.put("role", adminregister.getRole());	        
-//	        System.out.println("token" + jwtToken);
-//	        
-//	        return ResponseEntity.ok(responseBody);
-//
-//		} catch(Exception e) {
-//			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
-//		}
-//	}
-
-	
-//	@PostMapping("/invite")
-//	public ResponseEntity<?> inviteUser(@RequestParam("email") String email,
-//	                                    @RequestParam("Authorization") String token) {
-//	    try {
-//	        String role = jwtUtil.getRoleFromToken(token);
-//	        if (!"ADMIN".equals(role)) {
-//	            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-//	                    .body("{\"message\": \"Only admin can invite users.\"}");
-//	        }
-//
-//	        Optional<AdminRegister> existingUser = adminregisterrepository.findByEmail(email);
-//	        if (existingUser.isPresent()) {
-//	            return ResponseEntity.badRequest().body("{\"message\": \"Email is already registered.\"}");
-//	        }
-//
-//	        // Get admin's email from token
-//	        String adminEmail = jwtUtil.getEmailFromToken(token);
-//
-//	        // Invitation link
-//	        String inviteLink = "http://your-frontend-domain.com/register?email=" +
-//	                URLEncoder.encode(email, StandardCharsets.UTF_8);
-//
-//	        // Send email content
-//	        String subject = "You're Invited to Join Vsmart ChatBot";
-//	        String htmlContent = "<p>You have been invited by <b>" + adminEmail + "</b> to register on Vsmart ChatBot.</p>" +
-//	                "<p>Click the button below to create your account:</p>" +
-//	                "<p><a href=\"" + inviteLink + "\" style=\"padding: 10px 20px; background-color: #4CAF50; color: white; " +
-//	                "text-decoration: none; border-radius: 5px;\">Create Account</a></p>";
-//
-////	        emailService.sendHtmlEmail(adminEmail,email,subject, htmlContent);
-//
-//	        return ResponseEntity.ok("{\"message\": \"Invitation sent successfully.\"}");
-//
-//	    } catch (Exception e) {
-//	        e.printStackTrace();
-//	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-//	                .body("{\"message\": \"Internal server error.\"}");
-//	    }
-//	}
-	
 	
 	@PostMapping("/register")
 	public ResponseEntity<?> register(
@@ -184,21 +64,34 @@ public class AdminRegisterController {
 	    try {
 	        long count = adminregisterrepository.count();
 
-	        // Check if email already exists
-	        if (adminregisterrepository.findByEmail(email).isPresent()) {
-	            return ResponseEntity.badRequest().body("Email is already registered.");
+	        // Find the existing invited user by email
+	        Optional<AdminRegister> existingUserOpt = adminregisterrepository.findByEmail(email);
+	        
+	        if (existingUserOpt.isPresent()) {
+	            AdminRegister existingUser = existingUserOpt.get();
+
+	            // If user already has a username and password, prevent duplicate registration
+	            if (existingUser.getUsername() != null && existingUser.getPassword() != null) {
+	                return ResponseEntity.badRequest().body("Email is already registered.");
+	            }
+
+	            existingUser.setUsername(username);
+	            existingUser.setPassword(new BCryptPasswordEncoder().encode(password));
+	            existingUser.setStatus(true); // Activate the user
+
+	            adminregisterrepository.save(existingUser);
+	            return ResponseEntity.ok("User registered successfully.");
 	        }
 
-	        AdminRegister newUser = new AdminRegister();
-	        newUser.setUsername(username);
-	        newUser.setEmail(email);
-	        newUser.setPassword(new BCryptPasswordEncoder().encode(password));
-
-	        // First user becomes ADMIN with ACTIVE status
+	        // Handle first admin case
 	        if (count == 0) {
+	            AdminRegister newUser = new AdminRegister();
+	            newUser.setUsername(username);
+	            newUser.setEmail(email);
+	            newUser.setPassword(new BCryptPasswordEncoder().encode(password));
+
 	            Role adminRole = rolerepository.findByRole("ADMIN")
 	                    .orElseThrow(() -> new RuntimeException("Role 'ADMIN' not found"));
-
 
 	            newUser.setRole(adminRole);
 	            newUser.setStatus(true);
@@ -207,14 +100,13 @@ public class AdminRegisterController {
 	            return ResponseEntity.ok("First Admin registered successfully.");
 	        }
 
-	        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Only the first user can self-register.");
+	        return ResponseEntity.badRequest().body("Invalid registration attempt. Please check your invitation.");
 
 	    } catch (Exception e) {
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 	                .body("Error: " + e.getMessage());
 	    }
 	}
-
 
 	@PostMapping("/login")
 	public ResponseEntity<?> AdminLogin(@RequestBody Map<String, String> loginRequest){
@@ -242,7 +134,7 @@ public class AdminRegisterController {
 	        responseBody.put("name", adminregister.getUsername());
 	        responseBody.put("email", adminregister.getEmail());
 	        responseBody.put("userId", adminregister.getId());
-	        responseBody.put("role", adminregister.getRole());	        
+	        responseBody.put("role", adminregister.getRole().getRole());	        
 	        System.out.println("token" + jwtToken);
 	        
 	        return ResponseEntity.ok(responseBody);
@@ -251,7 +143,6 @@ public class AdminRegisterController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
 		}
 	}
-	
 	
 	@GetMapping("/getAllAdmin")
 	public ResponseEntity<List<AdminRegister>> getAllUser() {
@@ -270,25 +161,187 @@ public class AdminRegisterController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+	
+	@DeleteMapping("/delete/{id}")
+	@Transactional
+	public ResponseEntity<String> deleteAdminById(
+	    @RequestHeader("Authorization") String token,
+	    @PathVariable("id") Long id) {
 
-
-	@PostMapping("/invite")
-	public ResponseEntity<?> sendInvitation(@RequestParam String email, @RequestParam String role) {
 	    try {
-	    	String registrationLink = "http://localhost:3000/#/register?email=" + 
-                    URLEncoder.encode(email, StandardCharsets.UTF_8) + 
-                    "&role=" + 
-                    URLEncoder.encode(role, StandardCharsets.UTF_8);
+	        // Check if requester is ADMIN
+	        String role = jwtUtil.getRoleFromToken(token);
+	        if (!"ADMIN".equals(role)) {
+	            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+	                                 .body("{\"message\": \"Only admin can delete subadmin\"}");
+	        }
 
-	        String subject = "You have been invited to join";
-	        String body = "Hi,\n\nYou have been invited to join. Click the link below to register:\n\n" + 
-	                      registrationLink + "\n\n-chatbot to Team";
+	        // Find the admin
+	        Optional<AdminRegister> adminOpt = adminregisterrepository.findById(id);
+	        if (adminOpt.isEmpty()) {
+	            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+	                                 .body("{\"message\": \"Admin not found\"}");
+	        }
 
-	        emailservice.sendEmail(email, subject, body); // This calls the email service
+	        AdminRegister admin = adminOpt.get();
 
-	        return ResponseEntity.ok("Invitation sent successfully.");
+	        // Remove the admin from all departments
+	        List<Department> departmentsToUpdate = new ArrayList<>();
+	        for (Department dep : admin.getDepartments()) {
+	            if (dep.getAdmins().remove(admin)) {
+	                departmentsToUpdate.add(dep); // track updated departments
+	            }
+	        }
+
+	        // Save the modified departments to update the join table
+	        departmentrepository.saveAll(departmentsToUpdate);
+
+	        // Now delete the admin
+	        adminregisterrepository.delete(admin);
+
+	        return ResponseEntity.ok("{\"message\": \"Admin deleted and removed from departments successfully\"}");
+
 	    } catch (Exception e) {
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+	                             .body("{\"message\": \"An error occurred while deleting the admin.\"}");
+	    }
+	}
+	
+	@PostMapping("/invite")
+    public ResponseEntity<String> sendInvitation(@RequestParam String email, @RequestParam String role,@RequestHeader("Authorization") String token) {
+		try {
+			
+			String roles =  jwtUtil.getRoleFromToken(token);
+			
+			 System.out.println("role"+ role);
+
+	            if (!"ADMIN".equals(roles)) {
+	                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("{\"message\": \"Only admin can add agent and admin\"}");
+	            }
+			// Check if email already exists
+	        if (adminregisterrepository.findByEmail(email).isPresent()) {
+	            return ResponseEntity.badRequest().body("Email is already registered.");
+	        }
+
+	     // Retrieve the role based on the passed role value
+	        Role userRole = rolerepository.findByRole(role.toUpperCase())
+	        	    .orElseThrow(() -> new RuntimeException("Role '" + role.toUpperCase() + "' not found"));;
+	        
+	        AdminRegister newUser = new AdminRegister();
+	        newUser.setEmail(email);
+	        newUser.setRole(userRole);
+	        newUser.setStatus(false);
+	        newUser.setCode(UUID.randomUUID().toString());
+        
+        String link = "http://localhost:3000/#/register?token=" + newUser.getCode();
+        String subject = "You have been invited to join";
+        String body = "Hi,\n\nYou have been invited to join. Click the link below to register:\n\n" + 
+                      link + "\n\n-chatbot  Team";
+        
+     
+        emailservice.sendEmail(email, subject, body); // This calls the email service 
+        
+        adminregisterrepository.save(newUser);
+        
+        return ResponseEntity.ok("Invitation sent successfully.");
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
+    }
+}
+	
+	
+	@GetMapping("/register-token/{token}")
+	public ResponseEntity<?> getDetailsFromToken(@PathVariable String token) {
+	    Optional<AdminRegister> invitation = adminregisterrepository.findByCode(token);
+	    if (invitation.isPresent()) {
+	        Map<String, String> response = new HashMap<>();
+	        response.put("email", invitation.get().getEmail());
+	        response.put("role", invitation.get().getRole().getRole());
+	        return ResponseEntity.ok(response);
+	    } else {
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid or expired token.");
+	    }
+	}
+
+	
+	@GetMapping("/getadminnames")
+	public ResponseEntity<List<AdminUserDto>> getAllUsernamesAndIds() {
+	    try {
+	        List<AdminUserDto> users = adminregisterrepository.findAllUserIdAndUsername();
+	        
+	        if (users.isEmpty()) {
+	            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+	        }
+	        
+	        return new ResponseEntity<>(users, HttpStatus.OK);
+	        
+	    } catch (Exception e) {
+	        return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+	    }
+	}
+	
+	
+	@GetMapping("/getAdminbyid/{id}")
+	 public ResponseEntity<AdminRegister> getUserById(@PathVariable Long id) {
+	        Optional<AdminRegister> userOptional = adminregisterrepository.findById(id);
+	        if (userOptional.isPresent()) {
+	        	AdminRegister user = userOptional.get();
+	            return ResponseEntity.ok(user);
+	        } else {
+	            return ResponseEntity.notFound().build();
+	        }
+	 }
+	
+	@PatchMapping("/updateAdmin/{id}")
+	public ResponseEntity<?> updateAdmin(@RequestHeader("Authorization") String token,
+	                                     @PathVariable Long id,
+	                                     @RequestParam("email") String email,
+	                                     @RequestParam("role") String role) {
+	    try {
+	        String roles = jwtUtil.getRoleFromToken(token);
+	        if (!"ADMIN".equals(roles)) {
+	            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("{\"message\": \"Only admin can update\"}");
+	        }
+	        Optional<AdminRegister> optionalAdmin = adminregisterrepository.findById(id);
+	        if (optionalAdmin.isEmpty()) {
+	            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+	                    .body("{\"message\": \"admin or agent not found\"}");
+	        }
+
+	        // 🔍 Check if email is already used by another user
+	        Optional<AdminRegister> emailExists = adminregisterrepository.findByEmail(email);
+	       // Option 1: Use != for primitive comparison
+	        if (emailExists.isPresent() && emailExists.get().getId() != id) {
+	            return ResponseEntity.status(HttpStatus.CONFLICT)
+	                    .body("{\"message\": \"Email is already registered\"}");
+	        }
+
+	        Role userRole = rolerepository.findByRole(role.toUpperCase())
+	                .orElseThrow(() -> new RuntimeException("Role '" + role.toUpperCase() + "' not found"));
+
+	        AdminRegister adminregister = optionalAdmin.get();
+	        if (adminregister.isStatus()) {
+	            return ResponseEntity.ok().body("{\"message\": \"No need to update\"}");
+	        } else {
+	            adminregister.setEmail(email);
+	            adminregister.setRole(userRole);
+	            adminregister.setStatus(false);
+	            adminregister.setCode(UUID.randomUUID().toString());
+
+	            String link = "http://localhost:3000/#/register?token=" + adminregister.getCode();
+	            String subject = "You have been invited to join";
+	            String body = "Hi,\n\nYou have been invited to join. Click the link below to register:\n\n" +
+	                          link + "\n\n-chatbot Team";
+
+	            emailservice.sendEmail(email, subject, body);
+	            adminregisterrepository.save(adminregister);
+	        }
+
+	        return ResponseEntity.ok().body("{\"message\": \"Department updated successfully\"}");
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+	                .body("{\"message\": \"Error while updating department\"}");
 	    }
 	}
 
