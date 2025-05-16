@@ -199,7 +199,7 @@ public class ChatBoxController {
 <body class="bg-light">
    
     <!-- Front Page -->
-    <div class="container mt-5 p-4 bg-white" id="auth-container" style="max-width: 320px;">
+    <div class="container mt-3 p-4 bg-white" id="auth-container" style="max-width: 320px;">
        <h2 class="text-center mb-4"> WELCOME TO LIVE CHAT </h2>
         <ul class="nav nav-tabs">
             <li class="nav-item">
@@ -251,7 +251,8 @@ public class ChatBoxController {
     
     <!-- Chat Screen -->
     <div class="container p-2 bg-white rounded shadow-sm d-none" id="chat-screen" style="max-width: 400px;">
-        <div class="bg-primary text-white py-2 px-2 d-flex justify-content-between align-items-center rounded-top">
+    
+    <div class="bg-primary text-white py-2 px-2 d-flex justify-content-between align-items-center rounded-top">
             <span class="fs-5 fw-bold">LiveChat</span>   
             <!-- Dropdown Menu -->
             <div class="dropdown">
@@ -263,6 +264,30 @@ public class ChatBoxController {
                 </ul>
             </div>
         </div>
+    <div
+  class="bg-primary text-center text-white"
+  style={{
+    backgroundColor: "#0066cc",
+    padding: "15px",
+    borderTopLeftRadius: "8px",
+    borderTopRightRadius: "8px"
+  }}
+>
+  <img
+    src="https://meegaan.com/wp-content/uploads/2023/09/logo.png"
+    alt="logo"
+    style={{
+      height: "40px",
+      marginBottom: "5px"
+    }}
+  />
+  <h5 class="mb-0 ">Hi All</h5>
+  <p class="small mb-0">
+    Meegaan Tech specializes in delivering software and OTT media solutions, offering
+    cutting-edge technology for education and entertainment industries.
+  </p>
+</div>
+    
         <!-- Chat Messages -->
         <div id="messages" class="bg-light"></div>
         <!-- Chat Input Field -->
