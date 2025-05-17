@@ -8,12 +8,14 @@ import lombok.Setter;
 public class UserAuth {
     private String token;
     private String message;
+	private String emailId;
     private String username; // ✅ Added username field
 
-    public UserAuth(String token, String message, String username) {
+    public UserAuth(String token,String emailId, String message, String username) {
         this.token = token;
         this.message = message;
         this.username = username;
+		this.emailId = emailId;
         
         
     }
@@ -40,5 +42,11 @@ public class UserAuth {
 
 	public void setUsername(String username) {
 		this.username = username;
+	}
+	public String getEmailId() {
+		return emailId;
+	}
+	public void setEmailId(String emailId) {
+		this.emailId = emailId;
 	}
 }

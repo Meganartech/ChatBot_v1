@@ -23,39 +23,73 @@ public class UserAuthService {
     /** 🔹 Register User */
     public Map<String, Object> register(UserRegister request) {
         Map<String, Object> response = new HashMap<>();
-
+    
         try {
+            // Validate email format
+            if (!isValidEmail(request.getEmail())) {
+                response.put("status", "error");
+                response.put("message", "Please provide a valid email address");
+                return response;
+            }
+    
             // Fetch property entity by ID
             Property property = propertyRepo.findById(request.getPropertyId())
                     .orElseThrow(() -> new IllegalArgumentException("Property not found!"));
             
+            // Check if email exists (globally unique)
+            if (userRepo.existsByEmail(request.getEmail())) {
+                response.put("status", "error");
+                response.put("message", "Email already registered!");
+                return response;
+            }
+    
             // Check if username exists within the specific property ID
             if (userRepo.existsByUsernameAndPropertyId(request.getUsername(), property.getId())) {
                 response.put("status", "error");
                 response.put("message", "Username already taken in this property!");
                 return response;
             }
-
+    
             // Create new user
             User user = new User();
             user.setUsername(request.getUsername());
+            user.setEmail(request.getEmail());
             user.setPassword(passwordEncoder.encode(request.getPassword()));
             user.setProperty(property);
-
+    
             // Save user
             userRepo.save(user);
-
+    
+            // Send verification email (you'll need to implement this)
+            sendVerificationEmail(user);
+    
             response.put("status", "success");
-            response.put("message", "User registered successfully!");
+            response.put("message", "User registered successfully! Please check your email for verification.");
+            response.put("userId", user.getId());
         } catch (IllegalArgumentException e) {
             response.put("status", "error");
             response.put("message", e.getMessage());
         } catch (Exception e) {
             response.put("status", "error");
-            response.put("message", "Something went wrong during registration!");
+            response.put("message", "Registration failed: " + e.getMessage());
+        
         }
-
+    
         return response;
+    }
+    
+    private boolean isValidEmail(String email) {
+        // Simple email validation regex
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+        return email != null && email.matches(emailRegex);
+    }
+    
+    private void sendVerificationEmail(User user) {
+        // Implement your email sending logic here
+        // Typically includes:
+        // 1. Generate verification token
+        // 2. Save token in database with expiration
+        // 3. Send email with verification link
     }
 
     /** 🔹 Login User */

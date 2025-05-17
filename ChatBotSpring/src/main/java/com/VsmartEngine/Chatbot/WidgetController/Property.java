@@ -25,7 +25,9 @@ public class Property {
 
     @Column(columnDefinition = "TEXT", nullable = false)
     private String widgetScript;
-
+    private String logoUrl; // New field for logo URL
+    private String headline; // New field for headline
+    private String textArea; // New field for text area
     @Enumerated(EnumType.STRING)
     @Column(nullable = true)
     private ChatbotType chatbotType; 
@@ -44,7 +46,7 @@ public class Property {
         this.uniquePropertyId = UUID.randomUUID().toString();
     }
 
-    public Property(String adminEmail, String propertyName, String websiteURL, String widgetScript, ChatbotType chatbotType, String buttonColor, String imageName, Long imageOid) {
+    public Property(String adminEmail, String propertyName, String websiteURL, String widgetScript, ChatbotType chatbotType, String buttonColor, String imageName, Long imageOid, String logoUrl, String headline, String textArea) {
         this.adminEmail = adminEmail;
         this.propertyName = propertyName;
         this.websiteURL = websiteURL;
@@ -54,7 +56,18 @@ public class Property {
         this.uniquePropertyId = UUID.randomUUID().toString();
         this.imageName = imageName;
         this.imageOid = imageOid;
+        this.logoUrl = logoUrl; // Initialize logo URL
+        this.headline = headline; // Initialize headline
+        this.textArea = textArea; // Initialize text area
     }
+    public String getLogoUrl() { return logoUrl; }
+    public void setLogoUrl(String logoUrl) { this.logoUrl = logoUrl; }
+
+    public String getHeadline() { return headline; }
+    public void setHeadline(String headline) { this.headline = headline; }
+
+    public String getTextArea() { return textArea; }
+    public void setTextArea(String textArea) { this.textArea = textArea; }
 
     // Getters and Setters
     public Long getId() { return id; }

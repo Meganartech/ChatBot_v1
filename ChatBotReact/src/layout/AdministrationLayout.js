@@ -22,6 +22,7 @@ import WidgetBody from '../views/property/widgets/WidgetBody';
 import ChatWidget from '../views/property/widgets/ChatWidget';
 import Members from '../views/UserManagement/PropertyMembers/Members';
 import Departments from '../views/UserManagement/Departments/Departments';
+import WidgetContent from '../views/property/widgets/WidgetContent';
 import Trigger from '../views/Settings/Trigger';
 
 const AdministrationLayout = () => {
@@ -82,7 +83,7 @@ const AdministrationLayout = () => {
     switch (activeTab) {
       case 'Overview': return <WidgetBody />;
       case 'Chat Widget': return <ChatWidget />;
-      case 'Widget Content': return <div>Widget Content Component</div>;
+      case 'Widget Content': return <WidgetContent />;
       case 'Trigger': return <Trigger key={section}/>;
       case 'Property Members': return  <Members key={section} />;;
       case 'Departments': return <Departments key={section}/>;
