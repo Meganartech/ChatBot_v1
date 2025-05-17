@@ -199,7 +199,7 @@ public class ChatBoxController {
 <body class="bg-light">
    
     <!-- Front Page -->
-    <div class="container mt-5 p-4 bg-white" id="auth-container" style="max-width: 320px;">
+    <div class="container mt-3 p-4 bg-white" id="auth-container" style="max-width: 320px;">
        <h2 class="text-center mb-4"> WELCOME TO LIVE CHAT </h2>
         <ul class="nav nav-tabs">
             <li class="nav-item">
@@ -231,7 +231,11 @@ public class ChatBoxController {
 		    <div class="input-group mb-4">
 		        <span class="input-group-text"><i class="fa fa-user"></i></span>
 		        <input type="text" id="register-username" class="form-control" placeholder="Username">
-		    </div>
+		    </div> 
+            <div class="input-group mb-4">
+		        <span class="input-group-text"><i class="fa fa-envelope"></i></span>
+		        <input type="text" id="register-email" class="form-control" placeholder="Email ID">
+		    </div> 
 		    <div class="input-group mb-4">
 		        <span class="input-group-text"><i class="fa fa-lock"></i></span>
 		        <input type="password" id="register-password" class="form-control" placeholder="Password">
@@ -247,7 +251,8 @@ public class ChatBoxController {
     
     <!-- Chat Screen -->
     <div class="container p-2 bg-white rounded shadow-sm d-none" id="chat-screen" style="max-width: 400px;">
-        <div class="bg-primary text-white py-2 px-2 d-flex justify-content-between align-items-center rounded-top">
+    
+    <div class="bg-primary text-white py-2 px-2 d-flex justify-content-between align-items-center rounded-top">
             <span class="fs-5 fw-bold">LiveChat</span>   
             <!-- Dropdown Menu -->
             <div class="dropdown">
@@ -259,6 +264,30 @@ public class ChatBoxController {
                 </ul>
             </div>
         </div>
+    <div
+  class="bg-primary text-center text-white"
+  style={{
+    backgroundColor: "#0066cc",
+    padding: "15px",
+    borderTopLeftRadius: "8px",
+    borderTopRightRadius: "8px"
+  }}
+>
+  <img
+    src="https://meegaan.com/wp-content/uploads/2023/09/logo.png"
+    alt="logo"
+    style={{
+      height: "40px",
+      marginBottom: "5px"
+    }}
+  />
+  <h5 class="mb-0 ">Hi All</h5>
+  <p class="small mb-0">
+    Meegaan Tech specializes in delivering software and OTT media solutions, offering
+    cutting-edge technology for education and entertainment industries.
+  </p>
+</div>
+    
         <!-- Chat Messages -->
         <div id="messages" class="bg-light"></div>
         <!-- Chat Input Field -->
@@ -300,9 +329,10 @@ public class ChatBoxController {
         // Register Button Event
         document.getElementById("register-btn").addEventListener("click", function () {
             const username = document.getElementById("register-username").value.trim();
+            const email = document.getElementById("register-email").value.trim();
             const password = document.getElementById("register-password").value.trim();
 
-            if (!username || !password) {
+            if (!username || !password || !email) {
                 displayMessage("register-message", "All fields are required!", "error");
                 return;
             }
@@ -310,13 +340,13 @@ public class ChatBoxController {
             fetch("http://localhost:8080/user/auth/register", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username, password, propertyId })
+                body: JSON.stringify({ username,email, password, propertyId })
             })
             .then(response => response.json())
             .then(data => {
                 if (data.status === "success") {
                     displayMessage("register-message", "Registration Successful!", "success");
-                    clearForm("register-username", "register-password");
+                    clearForm("register-username","register-email", "register-password");
                 } else {
                     displayMessage("register-message", data.message, "error");
                 }
