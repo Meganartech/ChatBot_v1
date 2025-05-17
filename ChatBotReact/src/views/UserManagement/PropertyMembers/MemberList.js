@@ -26,19 +26,6 @@ const MemberList = ({ admins, token, onAddMemberClick, refreshAdmins,Edit }) => 
         };
         
           console.log(selectedAdmins)
-  
-         
-            
-              const handleEdit = (adminId) => {
-                // You can either log the ID or handle the edit functionality here
-                console.log("Edit admin with ID:", adminId);
-              
-                // Example: Redirect to an edit page (if you're using React Router)
-                // history.push(`/edit-admin/${adminId}`);
-              
-                // Example: Open a modal to edit the admin details
-                // setIsModalOpen(true); // Open modal to edit the admin
-              };
             
               const handleDelete = async (adminId) => {
                 try{
@@ -50,6 +37,7 @@ const MemberList = ({ admins, token, onAddMemberClick, refreshAdmins,Edit }) => 
                   if (response.status <= 204) {
                     refreshAdmins();
                     alert('Admin deleted successfully');
+                    window.location.reload(); // Reload the entire window
                   } else {
                     console.log(response.data);
                   }
@@ -166,7 +154,7 @@ const MemberList = ({ admins, token, onAddMemberClick, refreshAdmins,Edit }) => 
                   ) : (
                       <CTableRow>
                         <CTableDataCell colSpan="5" className="text-center">
-                          No departments available.
+                          No Admins available.
                         </CTableDataCell>
                       </CTableRow>
                     )}

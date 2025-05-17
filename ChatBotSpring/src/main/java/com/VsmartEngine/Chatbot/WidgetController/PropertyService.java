@@ -2,8 +2,7 @@ package com.VsmartEngine.Chatbot.WidgetController;
 
 import com.VsmartEngine.Chatbot.Admin.AdminRegister;
 import com.VsmartEngine.Chatbot.Admin.AdminRegisterRepository;
-import com.VsmartEngine.Chatbot.WidgetController.Property;
-import com.VsmartEngine.Chatbot.WidgetController.PropertyRepo;
+
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;

@@ -26,7 +26,6 @@ const AddDepartment = ({ department,setDepartment,token, users, onCancel, editDe
     try {
       const response = await axios.get(`http://localhost:8080/chatbot/getdep/${editDepId}`);
       const data = response.data;
-
       setDepartment({
         depName: data.depName,
         description: data.description,
@@ -37,8 +36,7 @@ const AddDepartment = ({ department,setDepartment,token, users, onCancel, editDe
       alert('Failed to load department for editing.');
     } 
   };
-
-  
+  console.log(department)
 
   const handleInputChange = (e) => {
     const { id, value } = e.target;
@@ -83,7 +81,7 @@ const AddDepartment = ({ department,setDepartment,token, users, onCancel, editDe
       if (response.status === 200) {
         alert(editDepId ? 'Department updated successfully!' : 'Department added successfully!');
   
-        // ✅ Reset form only if adding a new department
+        // Reset form only if adding a new department
         if (!editDepId) {
           setDepartment({
             depName: '',
@@ -136,23 +134,27 @@ const AddDepartment = ({ department,setDepartment,token, users, onCancel, editDe
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <CFormLabel className="mb-2 w-50" htmlFor="members">Members</CFormLabel>
             <CCard style={{ width: '18rem' ,borderRadius:'3px',maxHeight:'150px',overflowY:'auto'}}>
-              {Array.isArray(users) && users.length > 0 ? (
-                users.map((user) => (
-                  <CCardText className="p-1 mb-0" key={user.id} style={{ display: 'flex', alignItems: 'center' }}>
-                    <input
-                      type="checkbox"
-                      id={`member-${user.id}`}
-                      checked={department.adminIds.includes(user.id)}
-                      onChange={() => handleCheckboxChange(user.id)}
-                    />
-                    <label htmlFor={`member-${user.id}`} style={{ marginLeft: '10px' }}>
-                      {user.username}
-                    </label>
-                  </CCardText>
-                ))
-              ) : (
-                <div className="p-2">No members found</div>
-              )}
+            {users.map((user) => {
+              const isAssigned = user.department !== null;
+              return (
+                <CCardText
+                  className="p-1 mb-0"
+                  key={user.id}
+                  style={{ display: 'flex', alignItems: 'center', color: isAssigned ? '#999' : '#000' }}
+                >
+                  <input
+                    type="checkbox"
+                    id={`member-${user.id}`}
+                    checked={department.adminIds.includes(user.id)}
+                    disabled={!editDepId && isAssigned}
+                    onChange={() => handleCheckboxChange(user.id)}
+                  />
+                  <label htmlFor={`member-${user.id}`} style={{ marginLeft: '10px' }}>
+                    {user.username}
+                  </label>
+                </CCardText>
+              );
+            })}
             </CCard>
           </div>
         </div>

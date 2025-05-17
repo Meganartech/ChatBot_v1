@@ -45,10 +45,12 @@ public class AdminRegister {
 	
 	@Column(name="uniquecode")
 	private String code;
-	
-	@ManyToMany(mappedBy = "admins")
+		
+	@ManyToOne
+	@JoinColumn(name = "department_id")
 	@JsonBackReference
-	private List<Department> departments = new ArrayList<>();
+	private Department department;
+
 
 	public AdminRegister() {
 		super();
@@ -56,7 +58,7 @@ public class AdminRegister {
 	}
 
 	public AdminRegister(long id, String username, String email, String password, Role role, boolean status,
-			String code, List<Department> departments) {
+			String code, Department department) {
 		super();
 		this.id = id;
 		this.username = username;
@@ -65,7 +67,7 @@ public class AdminRegister {
 		this.role = role;
 		this.status = status;
 		this.code = code;
-		this.departments = departments;
+		this.department = department;
 	}
 
 	public long getId() {
@@ -124,12 +126,12 @@ public class AdminRegister {
 		this.code = code;
 	}
 
-	public List<Department> getDepartments() {
-		return departments;
+	public Department getDepartment() {
+		return department;
 	}
 
-	public void setDepartments(List<Department> departments) {
-		this.departments = departments;
+	public void setDepartment(Department department) {
+		this.department = department;
 	}
-	
+
 }

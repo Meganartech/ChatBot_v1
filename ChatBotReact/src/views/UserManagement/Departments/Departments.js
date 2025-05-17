@@ -35,6 +35,8 @@ const Departments = () => {
     }
   };
 
+  
+
   const fetchMembers = async () => {
     try {
       const response = await axios.get('http://localhost:8080/chatbot/getadminnames');
@@ -44,6 +46,8 @@ const Departments = () => {
       setUsers([]);
     }
   };
+
+  console.log(users)
 
   const token = sessionStorage.getItem('token');
   const location = useLocation();

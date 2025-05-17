@@ -1,8 +1,6 @@
 package com.VsmartEngine.Chatbot.WidgetController;
 
 
-import com.VsmartEngine.Chatbot.WidgetController.Property;
-import com.VsmartEngine.Chatbot.WidgetController.PropertyService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
