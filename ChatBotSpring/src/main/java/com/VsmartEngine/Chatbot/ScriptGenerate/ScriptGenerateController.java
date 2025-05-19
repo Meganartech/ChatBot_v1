@@ -41,8 +41,9 @@ public class ScriptGenerateController {
                 @RequestParam(value = "logo", required = false) MultipartFile logo,
                 @RequestParam(value = "heading", required = false) String heading,
                 @RequestParam(value = "TextArea", required = false) String textArea,
-                @RequestParam(value = "logoAlign", required = false, defaultValue = "center") String logoAlign,
-                @RequestParam(value = "headingAlign", required = false, defaultValue = "center") String headingAlign) {
+                @RequestParam(value = "logoAlign", required = false) String logoAlign,
+                @RequestParam(value = "headingAlign", required = false) String headingAlign,
+                @RequestParam(value = " TextAlign", required = false) String  TextAlign) {
             try {
                 String role = jwtUtil.getRoleFromToken(token);
                 if (!"ADMIN".equals(role)) {
@@ -55,10 +56,10 @@ public class ScriptGenerateController {
                 script.setTextArea(textArea);
                 script.setLogoAlign(logoAlign);
                 script.setHeadingAlign(headingAlign);
+                script.setTextAlign(TextAlign);
                 if (logo != null && !logo.isEmpty()) {
                     script.setLogo(logo.getBytes());
                 }
-
                 ScriptGenerate saved = scriptgeneraterepository.save(script);
                 return ResponseEntity.ok(saved.getId());
             } catch (Exception e) {
@@ -67,11 +68,11 @@ public class ScriptGenerateController {
             }
         }
         
-
+        
         @PostMapping("/widget/property")
         public ResponseEntity<?> savePropertyInfo(
                 @RequestHeader("Authorization") String token,
-                @RequestParam("scriptId") UUID scriptId,
+                @RequestParam( value = "scriptId",required =false) UUID scriptId,
                 @RequestParam("propertyName") String propertyName,
                 @RequestParam("websiteURL") String websiteURL,
                 @RequestParam("buttonColor") String buttonColor) {
@@ -81,14 +82,25 @@ public class ScriptGenerateController {
                     return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Only admin can update property info.");
                 }
 
+                if (scriptId == null) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("scriptId is required. Please create appearance first.");
+                }
+
                 Optional<ScriptGenerate> optionalScript = scriptgeneraterepository.findById(scriptId);
                 if (optionalScript.isEmpty()) {
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid script ID.");
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                            .body("Invalid scriptId. Please create appearance before setting property.");
                 }
 
                 ScriptGenerate script = optionalScript.get();
-                if (script.getHeading() == null && script.getTextArea() == null && script.getLogo() == null) {
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Set appearance first.");
+
+                boolean isAppearanceSet = (script.getHeading() != null && !script.getHeading().isBlank()) ||
+                                          (script.getTextArea() != null && !script.getTextArea().isBlank()) ||
+                                          (script.getLogo() != null && script.getLogo().length > 0);
+
+                if (!isAppearanceSet) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                            .body("Appearance not set. Please set appearance before setting property info.");
                 }
 
                 script.setPropertyName(propertyName);
@@ -105,8 +117,47 @@ public class ScriptGenerateController {
                         .body("Error saving property info: " + e.getMessage());
             }
         }
+
         
-        
+
+//        @PostMapping("/widget/property")
+//        public ResponseEntity<?> savePropertyInfo(
+//                @RequestHeader("Authorization") String token,
+//                @RequestParam("scriptId") UUID scriptId,
+//                @RequestParam("propertyName") String propertyName,
+//                @RequestParam("websiteURL") String websiteURL,
+//                @RequestParam("buttonColor") String buttonColor) {
+//            try {
+//                String role = jwtUtil.getRoleFromToken(token);
+//                if (!"ADMIN".equals(role)) {
+//                    return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Only admin can update property info.");
+//                }
+//
+//                Optional<ScriptGenerate> optionalScript = scriptgeneraterepository.findById(scriptId);
+//                if (optionalScript.isEmpty()) {
+//                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid script ID.");
+//                }
+//
+//                ScriptGenerate script = optionalScript.get();
+//                if (script.getHeading() == null && script.getTextArea() == null && script.getLogo() == null) {
+//                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Set appearance first.");
+//                }
+//
+//                script.setPropertyName(propertyName);
+//                script.setWebsiteURL(websiteURL);
+//                script.setButtonColor(buttonColor);
+//
+//                String widgetScript = generateWidgetScript(scriptId);
+//                script.setWidgetScript(widgetScript);
+//                scriptgeneraterepository.save(script);
+//
+//                return ResponseEntity.ok().contentType(MediaType.TEXT_HTML).body(widgetScript);
+//            } catch (Exception e) {
+//                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                        .body("Error saving property info: " + e.getMessage());
+//            }
+//        }
+      
         @PatchMapping("/widget/appearance/{id}")
         public ResponseEntity<?> updateWidgetAppearance(
                 @RequestHeader("Authorization") String token,

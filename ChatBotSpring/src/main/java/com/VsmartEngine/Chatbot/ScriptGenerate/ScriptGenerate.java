@@ -41,6 +41,7 @@ public class ScriptGenerate {
 
 	    private String logoAlign; // left, center, right
 	    private String headingAlign;
+	    private String TextAlign;
 
 
 	public ScriptGenerate() {
@@ -49,7 +50,8 @@ public class ScriptGenerate {
 	}
 
 	public ScriptGenerate(UUID id, String propertyName, String websiteURL, String widgetScript, String buttonColor,
-			String language, byte[] logo, String heading, String textArea, String logoAlign, String headingAlign) {
+			String language, byte[] logo, String heading, String textArea, String logoAlign, String headingAlign,
+			String textAlign) {
 		super();
 		this.id = id;
 		this.propertyName = propertyName;
@@ -62,117 +64,103 @@ public class ScriptGenerate {
 		TextArea = textArea;
 		this.logoAlign = logoAlign;
 		this.headingAlign = headingAlign;
+		TextAlign = textAlign;
 	}
-
 
 	public UUID getId() {
 		return id;
 	}
 
-
 	public void setId(UUID id) {
 		this.id = id;
 	}
-
 
 	public String getPropertyName() {
 		return propertyName;
 	}
 
-
 	public void setPropertyName(String propertyName) {
 		this.propertyName = propertyName;
 	}
-
 
 	public String getWebsiteURL() {
 		return websiteURL;
 	}
 
-
 	public void setWebsiteURL(String websiteURL) {
 		this.websiteURL = websiteURL;
 	}
-
 
 	public String getWidgetScript() {
 		return widgetScript;
 	}
 
-
 	public void setWidgetScript(String widgetScript) {
 		this.widgetScript = widgetScript;
 	}
-
 
 	public String getButtonColor() {
 		return buttonColor;
 	}
 
-
 	public void setButtonColor(String buttonColor) {
 		this.buttonColor = buttonColor;
 	}
-
 
 	public String getLanguage() {
 		return Language;
 	}
 
-
 	public void setLanguage(String language) {
 		Language = language;
 	}
-
 
 	public byte[] getLogo() {
 		return logo;
 	}
 
-
 	public void setLogo(byte[] logo) {
 		this.logo = logo;
 	}
-
 
 	public String getHeading() {
 		return heading;
 	}
 
-
 	public void setHeading(String heading) {
 		this.heading = heading;
 	}
-
 
 	public String getTextArea() {
 		return TextArea;
 	}
 
-
 	public void setTextArea(String textArea) {
 		TextArea = textArea;
 	}
-
 
 	public String getLogoAlign() {
 		return logoAlign;
 	}
 
-
 	public void setLogoAlign(String logoAlign) {
 		this.logoAlign = logoAlign;
 	}
-
 
 	public String getHeadingAlign() {
 		return headingAlign;
 	}
 
-
 	public void setHeadingAlign(String headingAlign) {
 		this.headingAlign = headingAlign;
 	}
 
+	public String getTextAlign() {
+		return TextAlign;
+	}
+
+	public void setTextAlign(String textAlign) {
+		TextAlign = textAlign;
+	}
 	
 }
