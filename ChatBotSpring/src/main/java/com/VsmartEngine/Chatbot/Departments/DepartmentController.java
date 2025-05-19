@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+
 import com.VsmartEngine.Chatbot.Admin.AdminRegister;
 import com.VsmartEngine.Chatbot.Admin.AdminRegisterRepository;
 import com.VsmartEngine.Chatbot.TokenGeneration.JwtUtil;
@@ -37,50 +38,99 @@ public class DepartmentController {
 	@Autowired
 	private JwtUtil jwtUtil;
 	
+//	@PostMapping("/adddepartment")
+//	public ResponseEntity<?> addDepartment(@RequestBody DepartmentRequestDto departmentRequest,@RequestHeader("Authorization") String token) {
+//	    try {
+//	    	
+//	    	String roles =  jwtUtil.getRoleFromToken(token);
+//
+//	        if (!"ADMIN".equals(roles)) {
+//	            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("{\"message\": \"Only admin can add departments\"}");
+//	        }
+//	    	 
+//	        // Check if adminIds are null or empty
+//	        if (departmentRequest.getAdminIds() == null || departmentRequest.getAdminIds().isEmpty()) {
+//	            return ResponseEntity.badRequest().body("Admin IDs must not be empty.");
+//	        }
+//
+//	        Department department = new Department();
+//	        department.setDepName(departmentRequest.getDepName());
+//	        department.setDescription(departmentRequest.getDescription());
+//
+////	         Fetch admins by the provided admin IDs
+//	        List<AdminRegister> admins = adminregisterrepository.findAllById(departmentRequest.getAdminIds());
+//	        
+//	        // If no admins found, return a bad request response
+//	        if (admins.isEmpty()) {
+//	            return ResponseEntity.badRequest().body("No valid admins found for the provided IDs.");
+//	        }
+//
+//	        department.setAdmins(admins);
+//
+//	        // Save department
+//	        Department savedDepartment = departmentrepository.save(department);
+//
+//	        return ResponseEntity.ok(savedDepartment);
+//	        
+//	    } catch (InvalidDataAccessApiUsageException e) {
+//	        // Handle specific exception and return a custom message
+//	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//	                             .body("Error occurred while processing the department request: " + e.getMessage());
+//	    } catch (Exception e) {
+//	        // Catch any other unexpected exceptions
+//	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//	                             .body("An unexpected error occurred: " + e.getMessage());
+//	    }
+//	}
+	
+	
 	@PostMapping("/adddepartment")
-	public ResponseEntity<?> addDepartment(@RequestBody DepartmentRequestDto departmentRequest,@RequestHeader("Authorization") String token) {
+	public ResponseEntity<?> addDepartment(@RequestBody DepartmentRequestDto departmentRequest,
+	                                       @RequestHeader("Authorization") String token) {
 	    try {
-	    	
-	    	String roles =  jwtUtil.getRoleFromToken(token);
-
-	        if (!"ADMIN".equals(roles)) {
-	            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("{\"message\": \"Only admin can add departments\"}");
+	        String role = jwtUtil.getRoleFromToken(token);
+	        if (!"ADMIN".equals(role)) {
+	            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+	                    .body("{\"message\": \"Only admin can add departments\"}");
 	        }
-	    	 
-	        // Check if adminIds are null or empty
+
 	        if (departmentRequest.getAdminIds() == null || departmentRequest.getAdminIds().isEmpty()) {
 	            return ResponseEntity.badRequest().body("Admin IDs must not be empty.");
+	        }
+
+	        List<AdminRegister> admins = adminregisterrepository.findAllById(departmentRequest.getAdminIds());
+	        if (admins.isEmpty()) {
+	            return ResponseEntity.badRequest().body("No valid admins found for the provided IDs.");
+	        }
+
+	        // Check if any admin is already in another department
+	        for (AdminRegister admin : admins) {
+	            if (admin.getDepartment() != null) {
+	                return ResponseEntity.status(HttpStatus.CONFLICT)
+	                        .body("Admin '" + admin.getEmail() + "' is already assigned to a department.");
+	            }
 	        }
 
 	        Department department = new Department();
 	        department.setDepName(departmentRequest.getDepName());
 	        department.setDescription(departmentRequest.getDescription());
 
-//	         Fetch admins by the provided admin IDs
-	        List<AdminRegister> admins = adminregisterrepository.findAllById(departmentRequest.getAdminIds());
-	        
-	        // If no admins found, return a bad request response
-	        if (admins.isEmpty()) {
-	            return ResponseEntity.badRequest().body("No valid admins found for the provided IDs.");
+	        for (AdminRegister admin : admins) {
+	            admin.setDepartment(department); // Assign new department
 	        }
 
-	        department.setAdmins(admins);
+	        department.setAdmins(admins); // set back-reference
 
-	        // Save department
-	        Department savedDepartment = departmentrepository.save(department);
+	        Department saved = departmentrepository.save(department); // saves department + admins
 
-	        return ResponseEntity.ok(savedDepartment);
-	        
-	    } catch (InvalidDataAccessApiUsageException e) {
-	        // Handle specific exception and return a custom message
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-	                             .body("Error occurred while processing the department request: " + e.getMessage());
+	        return ResponseEntity.ok(saved);
+
 	    } catch (Exception e) {
-	        // Catch any other unexpected exceptions
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-	                             .body("An unexpected error occurred: " + e.getMessage());
+	                .body("An unexpected error occurred: " + e.getMessage());
 	    }
 	}
+
 	
 	@GetMapping("/getAllDepartment")
 	public ResponseEntity<List<DepartmentSummaryDto>> getAllDepartments() {
@@ -165,17 +215,49 @@ public class DepartmentController {
 	                    .body("{\"message\": \"Department not found\"}");
 	        }
 
+	     // Get existing department
 	        Department department = optionalDepartment.get();
 	        department.setDepName(departmentDTO.getDepName());
 	        department.setDescription(departmentDTO.getDescription());
 
-	        // Fetch and set the admin list
-	        List<AdminRegister> admins = adminregisterrepository.findAllById(departmentDTO.getAdminIds());
-	        department.setAdmins(admins);
+	        // Unassign old admins
+	        List<AdminRegister> oldAdmins = department.getAdmins();
+	        for (AdminRegister oldAdmin : oldAdmins) {
+	            oldAdmin.setDepartment(null);
+	        }
+	        adminregisterrepository.saveAll(oldAdmins); // persist the change
+	        
+	        
+	        System.out.printf("adminId",departmentDTO.getAdminIds());
 
+	        // Get new admins by ID
+	        List<AdminRegister> newAdmins = adminregisterrepository.findAllById(departmentDTO.getAdminIds());
+	        if (newAdmins.isEmpty()) {
+	            return ResponseEntity.badRequest().body("No valid admins found for the provided IDs.");
+	        }
+
+	        // Check if any new admin is already in another department
+	        for (AdminRegister admin : newAdmins) {
+	            Department currentDep = admin.getDepartment();
+	            if (currentDep != null && currentDep.getId() != department.getId()) {
+	                return ResponseEntity.status(HttpStatus.CONFLICT)
+	                        .body("Admin '" + admin.getEmail() + "' is already assigned to another department.");
+	            }
+	        }
+
+	        
+	        // Assign new admins
+	        for (AdminRegister admin : newAdmins) {
+	            admin.setDepartment(department);
+	        }
+	        adminregisterrepository.saveAll(newAdmins); // persist the change
+
+	        // Set new admins to department
+	        department.setAdmins(newAdmins);
 	        departmentrepository.save(department);
 
 	        return ResponseEntity.ok().body("{\"message\": \"Department updated successfully\"}");
+
 	    } catch (Exception e) {
 	        e.printStackTrace();
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

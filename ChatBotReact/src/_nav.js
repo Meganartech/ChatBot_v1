@@ -135,7 +135,7 @@ const _nav = [
   {
     component: CNavItem,
     name: 'Settings',
-    to: '/administration/settings',
+    to: '/administration/Trigger',
     icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
   },
   {

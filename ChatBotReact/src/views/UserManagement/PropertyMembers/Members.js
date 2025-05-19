@@ -28,6 +28,7 @@ console.log('admin',editId)
     if (location.pathname.endsWith('/property-members')) {
       setIsOpenAddMember(false);
       setEditId(undefined)
+      fetchAdmins();
     }
   }, [location]);
 
@@ -54,6 +55,7 @@ console.log('admin',editId)
           onCancel={() => {
              setIsOpenAddMember(false);
              setEditId(undefined)
+             fetchAdmins()
           }}
         />
       ) : (

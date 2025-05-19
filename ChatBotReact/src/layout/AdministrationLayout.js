@@ -23,6 +23,7 @@ import ChatWidget from '../views/property/widgets/ChatWidget';
 import Members from '../views/UserManagement/PropertyMembers/Members';
 import Departments from '../views/UserManagement/Departments/Departments';
 import WidgetContent from '../views/property/widgets/WidgetContent';
+import Trigger from '../views/Settings/Trigger';
 
 const AdministrationLayout = () => {
   const { section } = useParams();
@@ -32,7 +33,7 @@ const AdministrationLayout = () => {
     'overview': 'Overview',
     'chat-widget': 'Chat Widget',
     'widget-content': 'Widget Content',
-    'settings': 'Settings',
+    'Trigger':'Trigger',
     'property-members': 'Property Members',
     'departments': 'Departments',
   };
@@ -40,6 +41,7 @@ const AdministrationLayout = () => {
   const [activeTab, setActiveTab] = useState(sectionToTab[section] || 'Overview');
   const [isChannelsOpen, setIsChannelsOpen] = useState(false);
   const [isUserManagementOpen, setIsUserManagementOpen] = useState(false);
+  const [isSettingOpen,setIsSettingOpen] = useState(false);
   
 
   useEffect(() => {
@@ -59,6 +61,13 @@ const AdministrationLayout = () => {
     } else {
       setIsChannelsOpen(false);
     }
+
+    // Optionally auto-open "Channels" if needed:
+    if (currentTab === 'Trigger') {
+      setIsSettingOpen(true);
+    } else {
+      setIsSettingOpen(false);
+    }
   
   }, [section]);
   
@@ -75,7 +84,7 @@ const AdministrationLayout = () => {
       case 'Overview': return <WidgetBody />;
       case 'Chat Widget': return <ChatWidget />;
       case 'Widget Content': return <WidgetContent />;
-      case 'Settings': return <div>Settings Component</div>;
+      case 'Trigger': return <Trigger key={section}/>;
       case 'Property Members': return  <Members key={section} />;;
       case 'Departments': return <Departments key={section}/>;
       default: return <div>Select a section</div>;
@@ -92,7 +101,7 @@ const AdministrationLayout = () => {
         <CRow className="g-0" style={{ height: '100%' }}>
           <CCol sm={3} md={2} className="border-end" style={{ height: '100%', overflowY: 'auto' }}>
             <div>
-              <h6 className="fw-bold mb-3 small p-2">Administration</h6>
+              <h6 className="fw-bold mb-3 large p-3">Administration</h6>
               <CButton color={getButtonColor('Overview')} className="w-100 text-start mb-2 py-2 px-2 small" onClick={() => handleTabClick('Overview')}>
                 <FontAwesomeIcon icon={faTableColumns} className="me-2" /> Overview
               </CButton>
@@ -101,28 +110,36 @@ const AdministrationLayout = () => {
                 <span className="float-end">{isChannelsOpen ? '˅' : '›'}</span>
               </CButton>
               {isChannelsOpen && (
-                <div className="ps-3">
-                  <CButton color={getButtonColor('Chat Widget')} className="text-dark text-start w-100 py-2 px-2 mb-1 small" onClick={() => handleTabClick('Chat Widget')}>
+                <div>
+                  <CButton color={getButtonColor('Chat Widget')} className="text-dark text-start w-100 py-2 px-2 mb-1 small " onClick={() => handleTabClick('Chat Widget')}>
                     <FontAwesomeIcon icon={faCommentAlt} className="me-2" /> Chat Widget
                   </CButton>
-                  <CButton color={getButtonColor('Widget Content')} className="text-dark text-start w-100 py-2 px-2 mb-1 small" onClick={() => handleTabClick('Widget Content')}>
+                  <CButton color={getButtonColor('Widget Content')} className="text-dark text-start w-100 py-2 px-2 mb-1 small " onClick={() => handleTabClick('Widget Content')}>
                     <FontAwesomeIcon icon={faImage} className="me-2" /> Widget Content
                   </CButton>
                 </div>
               )}
-              <CButton color={getButtonColor('Settings')} className="w-100 text-start mb-2 py-2 px-2 small" onClick={() => handleTabClick('Settings')}>
+              <CButton color={getButtonColor('Settings')} className="w-100 text-start mb-2 py-2 px-2 small " onClick={() => setIsSettingOpen(!isSettingOpen)}>
                 <FontAwesomeIcon icon={faGear} className="me-2" /> Settings
+                <span className="float-end">{isSettingOpen ? '˅' : '›'}</span>
               </CButton>
-              <CButton className="w-100 text-start mb-1 py-2 px-2 small" onClick={() => setIsUserManagementOpen(!isUserManagementOpen)}>
+              {isSettingOpen && (
+                <div>
+                  <CButton color={getButtonColor('Trigger')} className="text-dark text-start w-100 py-2 px-2 mb-1 small " onClick={() => handleTabClick('Trigger')}>
+                    <FontAwesomeIcon icon={faCommentAlt} className="me-2" /> Trigger
+                  </CButton>
+                </div>
+              )}
+              <CButton className="w-100 text-start mb-1 py-2 px-2 small " onClick={() => setIsUserManagementOpen(!isUserManagementOpen)}>
                 <FontAwesomeIcon icon={faUserGear} className="me-2" /> User Management
                 <span className="float-end">{isUserManagementOpen ? '˅' : '›'}</span>
               </CButton>
               {isUserManagementOpen && (
-                <div className="ps-3">
-                  <CButton color={getButtonColor('Property Members')} className="text-dark text-start w-100 py-2 px-2 mb-1 small" onClick={() => handleTabClick('Property Members')}>
+                <div >
+                  <CButton color={getButtonColor('Property Members')} className="text-dark text-start w-100 py-2 px-2 mb-1 small " onClick={() => handleTabClick('Property Members')}>
                     <FontAwesomeIcon icon={faCommentAlt} className="me-2" /> Property Members
                   </CButton>
-                  <CButton color={getButtonColor('Departments')} className="text-dark text-start w-100 py-2 px-2 mb-1 small" onClick={() => handleTabClick('Departments')}>
+                  <CButton color={getButtonColor('Departments')} className="text-dark text-start w-100 py-2 px-2 mb-1 small " onClick={() => handleTabClick('Departments')}>
                     <FontAwesomeIcon icon={faImage} className="me-2" /> Departments
                   </CButton>
                 </div>

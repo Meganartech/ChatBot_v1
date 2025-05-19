@@ -107,6 +107,62 @@ public class AdminRegisterController {
 	                .body("Error: " + e.getMessage());
 	    }
 	}
+	
+	
+//	@PostMapping("/register")
+//	public ResponseEntity<?> register(
+//	        @RequestParam("username") String username,
+//	        @RequestParam("email") String email,
+//	        @RequestParam("password") String password,
+//	        @RequestParam(value = "role", required = false) String role,
+//	        Principal principal) {
+//
+//	    try {
+//	        boolean adminCount = adminregisterrepository.existsAdminByRole();
+//	        
+//	        System.out.println("count"+adminCount);
+//
+//	        // If no admin exists, allow first admin registration
+//	        if (adminCount) {
+//	            AdminRegister firstAdmin = new AdminRegister();
+//	            firstAdmin.setUsername(username);
+//	            firstAdmin.setEmail(email);
+//	            firstAdmin.setPassword(new BCryptPasswordEncoder().encode(password));
+//	            firstAdmin.setStatus(true);
+//
+//	            Role adminRole = rolerepository.findByRole("ADMIN")
+//	                    .orElseThrow(() -> new RuntimeException("Role 'ADMIN' not found"));
+//
+//	            firstAdmin.setRole(adminRole);
+//
+//	            adminregisterrepository.save(firstAdmin);
+//	            return ResponseEntity.ok("First Admin registered successfully.");
+//	        }
+//
+//	        // Normal invited-user registration flow
+//	        Optional<AdminRegister> existingUserOpt = adminregisterrepository.findByEmail(email);
+//	        if (existingUserOpt.isPresent()) {
+//	            AdminRegister user = existingUserOpt.get();
+//	            if (user.getUsername() != null && user.getPassword() != null) {
+//	                return ResponseEntity.badRequest().body("Email is already registered.");
+//	            }
+//
+//	            user.setUsername(username);
+//	            user.setPassword(new BCryptPasswordEncoder().encode(password));
+//	            user.setStatus(true);
+//
+//	            adminregisterrepository.save(user);
+//	            return ResponseEntity.ok("User registered successfully.");
+//	        }
+//
+//	        return ResponseEntity.badRequest().body("Invalid registration attempt. Please check your invitation.");
+//
+//	    } catch (Exception e) {
+//	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//	                .body("Error: " + e.getMessage());
+//	    }
+//	}
+
 
 	@PostMapping("/login")
 	public ResponseEntity<?> AdminLogin(@RequestBody Map<String, String> loginRequest){
@@ -148,7 +204,7 @@ public class AdminRegisterController {
 	public ResponseEntity<List<AdminRegister>> getAllUser() {
         try {
             // Fetch all users from the repository
-            List<AdminRegister> getAdmin = adminregisterrepository.findAll();
+            List<AdminRegister> getAdmin = adminregisterrepository.findAllByOrderByIdAsc();
             
             // Check if the list is empty
             if (getAdmin.isEmpty()) {
@@ -184,17 +240,6 @@ public class AdminRegisterController {
 	        }
 
 	        AdminRegister admin = adminOpt.get();
-
-	        // Remove the admin from all departments
-	        List<Department> departmentsToUpdate = new ArrayList<>();
-	        for (Department dep : admin.getDepartments()) {
-	            if (dep.getAdmins().remove(admin)) {
-	                departmentsToUpdate.add(dep); // track updated departments
-	            }
-	        }
-
-	        // Save the modified departments to update the join table
-	        departmentrepository.saveAll(departmentsToUpdate);
 
 	        // Now delete the admin
 	        adminregisterrepository.delete(admin);
@@ -238,7 +283,6 @@ public class AdminRegisterController {
         String body = "Hi,\n\nYou have been invited to join. Click the link below to register:\n\n" + 
                       link + "\n\n-chatbot  Team";
         
-     
         emailservice.sendEmail(email, subject, body); // This calls the email service 
         
         adminregisterrepository.save(newUser);
@@ -267,7 +311,7 @@ public class AdminRegisterController {
 	@GetMapping("/getadminnames")
 	public ResponseEntity<List<AdminUserDto>> getAllUsernamesAndIds() {
 	    try {
-	        List<AdminUserDto> users = adminregisterrepository.findAllUserIdAndUsername();
+	        List<AdminUserDto> users = adminregisterrepository.findAllUserIdAndUsernameAndDepartment();
 	        
 	        if (users.isEmpty()) {
 	            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -344,5 +388,12 @@ public class AdminRegisterController {
 	                .body("{\"message\": \"Error while updating department\"}");
 	    }
 	}
+	
+	@GetMapping("/check-admin-exists")
+	public ResponseEntity<Boolean> checkIfAdminExists() {
+	    boolean adminExists = adminregisterrepository.existsAdminByRole();
+	    return ResponseEntity.ok(adminExists);
+	}
+
 
 }

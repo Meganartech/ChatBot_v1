@@ -115,8 +115,7 @@ const DepartmentList = ({refreshDepartment,departments,token,onAddDepClick,Edit}
               <CTableHeaderCell scope="col" style={{ backgroundColor: '#F3F4F7',textAlign:'center' }}>Members</CTableHeaderCell>
               <CTableHeaderCell scope="col" style={{ backgroundColor: '#F3F4F7' }}>Action</CTableHeaderCell>
             </CTableRow>
-          </CTableHead>
-          
+          </CTableHead> 
           <CTableBody>
   {departments && departments.length > 0 ? (
     departments.map((dep) => (
@@ -165,7 +164,6 @@ const DepartmentList = ({refreshDepartment,departments,token,onAddDepClick,Edit}
     </CTableRow>
   )}
 </CTableBody>
-
           
                         </CTable>
                 </CCardBody>

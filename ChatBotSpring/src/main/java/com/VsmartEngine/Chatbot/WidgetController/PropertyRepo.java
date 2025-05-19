@@ -1,7 +1,5 @@
 package com.VsmartEngine.Chatbot.WidgetController;
 
-import com.VsmartEngine.Chatbot.WidgetController.Property;
-import com.VsmartEngine.Chatbot.WidgetController.ChatbotType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

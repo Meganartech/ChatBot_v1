@@ -15,6 +15,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -31,14 +32,19 @@ public class Department {
 	@Column(name="description")
 	private String description;
 	
-	@ManyToMany
-    @JoinTable(
-        name = "department_admins",
-        joinColumns = @JoinColumn(name = "department_id"),
-        inverseJoinColumns = @JoinColumn(name = "admin_id")
-    )
-	@JsonManagedReference // This side will be serialized
-    private List<AdminRegister> admins = new ArrayList<>();
+//	@ManyToMany
+//    @JoinTable(
+//        name = "department_admins",
+//        joinColumns = @JoinColumn(name = "department_id"),
+//        inverseJoinColumns = @JoinColumn(name = "admin_id")
+//    )
+//	@JsonManagedReference // This side will be serialized
+//    private List<AdminRegister> admins = new ArrayList<>();
+	
+	@OneToMany(mappedBy = "department")
+	@JsonManagedReference
+	private List<AdminRegister> admins = new ArrayList<>();
+
 
 	public Department() {
 		super();

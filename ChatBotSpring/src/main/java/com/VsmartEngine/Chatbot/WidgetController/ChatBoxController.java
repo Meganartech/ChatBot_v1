@@ -1,7 +1,5 @@
 package com.VsmartEngine.Chatbot.WidgetController;
 
-import com.VsmartEngine.Chatbot.WidgetController.Property;
-import com.VsmartEngine.Chatbot.WidgetController.PropertyRepo;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

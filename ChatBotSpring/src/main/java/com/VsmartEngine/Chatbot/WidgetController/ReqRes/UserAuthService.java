@@ -2,9 +2,6 @@ package com.VsmartEngine.Chatbot.WidgetController.ReqRes;
 
 import com.VsmartEngine.Chatbot.WidgetController.Property;
 import com.VsmartEngine.Chatbot.WidgetController.PropertyRepo;
-import com.VsmartEngine.Chatbot.WidgetController.ReqRes.User;
-import com.VsmartEngine.Chatbot.WidgetController.ReqRes.UserLogin;
-import com.VsmartEngine.Chatbot.WidgetController.ReqRes.UserRegister;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
