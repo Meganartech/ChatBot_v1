@@ -40,7 +40,7 @@ public class Trigger {
 	@JsonManagedReference
     private List<SetDepartment> departments = new ArrayList<>();
 	
-	
+	private List<String> firstTrigger;
 
 	public Trigger() {
 		super();
@@ -48,7 +48,7 @@ public class Trigger {
 	}
 
 	public Trigger(long triggerid, String name, int delay, Triggertype triggerType, TextOption textOption,
-			List<SetDepartment> departments) {
+			List<SetDepartment> departments, List<String> firstTrigger) {
 		super();
 		this.triggerid = triggerid;
 		this.name = name;
@@ -56,8 +56,9 @@ public class Trigger {
 		this.triggerType = triggerType;
 		this.textOption = textOption;
 		this.departments = departments;
+		this.firstTrigger = firstTrigger;
 	}
-	
+
 	public long getTriggerid() {
 		return triggerid;
 	}
@@ -105,5 +106,13 @@ public class Trigger {
 	public void setTriggerType(Triggertype triggerType) {
 		this.triggerType = triggerType;
 	}
-	
+
+	public List<String> getFirstTrigger() {
+		return firstTrigger;
+	}
+
+	public void setFirstTrigger(List<String> firstTrigger) {
+		this.firstTrigger = firstTrigger;
+	}
+		
 }

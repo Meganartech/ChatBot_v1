@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import TriggerList from './TriggerList'
 import TriggerAdd from './TriggerAdd'
+import { useLocation } from 'react-router-dom';
 
 
 const Trigger = () => {
@@ -16,15 +17,32 @@ const Trigger = () => {
     });
   const [triggerTypes, setTriggerTypes] = useState([])
   const token = sessionStorage.getItem('token');
+  const [departments, setDepartments] = useState([])
+  const [editTriggerId,setEditTriggerId] = useState();
+  
+    const handleEdit = (triggerId) =>{
+      setEditTriggerId(triggerId);
+    }
 
   console.log(token);
 
   useEffect(() => {
+    fetchDepartments();
     fetchTriggers();
     fetchTriggerType();
     }, []);
     
   
+  const fetchDepartments = async () => {
+    try {
+      const response = await axios.get('http://localhost:8080/chatbot/getAllDepartment')
+      setDepartments(response.data)
+    } catch (error) {
+      console.error('Error fetching departments:', error)
+      setDepartments([])
+    }
+  }
+
   const fetchTriggers = async () => {
     try {
       const response = await axios.get('http://localhost:8080/chatbot/getAllTrigger');
@@ -46,15 +64,25 @@ const Trigger = () => {
   }
 
   console.log(GetTrigger)
+
+   const location = useLocation();
+  
+    useEffect(() => {
+      if (location.pathname.endsWith('/Trigger')) {
+        setIsOpenAddTrigger(false);
+        setEditTriggerId(undefined); // ✅ clear edit mode
+      }
+    }, [location]);
   return (
     <>
-      {isOpenAddTrigger ? (
+      {isOpenAddTrigger || editTriggerId ? (
       <TriggerAdd
         Trigger={Trigger}
         setTrigger={setTrigger}
         token={token}
         triggerTypes={triggerTypes}
-        // editDepId={editDepId}
+        departments={departments}
+        editTriggerId={editTriggerId}
         onCancel={() => {
         setIsOpenAddTrigger(false);
         // setEditDepId(undefined);
@@ -65,8 +93,8 @@ const Trigger = () => {
         token={token}
         GetTrigger={GetTrigger}
         onAddTriggerClick={() => setIsOpenAddTrigger(true)}
-        refreshDepartment={fetchTriggers}
-        // Edit={handleEdit}
+        refreshTrigger={fetchTriggers}
+        Edit={handleEdit}
       />
       )}
     </>

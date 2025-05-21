@@ -22,7 +22,7 @@ import { FaSearch, FaPlus } from 'react-icons/fa'
 import { FaEdit, FaTrash } from 'react-icons/fa'; // Import the icons
 
 
-const TriggerList = ({token,GetTrigger,onAddTriggerClick,refreshDepartment}) => {
+const TriggerList = ({token,GetTrigger,onAddTriggerClick,refreshTrigger,Edit}) => {
 
   const [selectedTrigger, setSelectedTrigger] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
@@ -43,6 +43,29 @@ const TriggerList = ({token,GetTrigger,onAddTriggerClick,refreshDepartment}) => 
       setSelectedTrigger(selectedTrigger.filter((selectedId) => selectedId !== id));
     } else {
       setSelectedTrigger([...selectedTrigger, id]);
+    }
+  };
+
+  const handleDelete = async (triggerId) => {
+    try{
+      const response = await axios.delete(`http://localhost:8080/chatbot/deleteTrigger/${triggerId}`,{
+        headers:{
+          Authorization: token,
+        }
+      });
+      if (response.status <= 204) {
+        refreshTrigger();
+        alert('Trigger deleted successfully');
+      } else {
+        console.log(response.data);
+      }
+    } catch (error) {
+      if (error.response) {
+        console.error(error.response.data.message);
+        alert(error.response.data.message);
+      } else {
+        console.error('Something went wrong', error.message);
+      }
     }
   };
 
@@ -107,7 +130,7 @@ const TriggerList = ({token,GetTrigger,onAddTriggerClick,refreshDepartment}) => 
                           fontSize: '30px',
                           borderRadius: '2px',
                         }}
-                        // onClick={() => Edit(dep.id)}
+                        onClick={() => Edit(trigger.triggerid)}
                       />
                       <FaTrash
                         className="me-1 p-2"
@@ -117,7 +140,7 @@ const TriggerList = ({token,GetTrigger,onAddTriggerClick,refreshDepartment}) => 
                           fontSize: '30px',
                           borderRadius: '2px',
                         }}
-                        // onClick={() => handleDelete(dep.id)}
+                        onClick={() => handleDelete(trigger.triggerid)}
                       />
                     </CTableDataCell>
                   </CTableRow>

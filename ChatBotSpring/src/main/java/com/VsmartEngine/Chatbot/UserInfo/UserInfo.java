@@ -1,4 +1,4 @@
-package com.VsmartEngine.Chatbot.ScriptGenerate;
+package com.VsmartEngine.Chatbot.UserInfo;
 
 import java.util.UUID;
 

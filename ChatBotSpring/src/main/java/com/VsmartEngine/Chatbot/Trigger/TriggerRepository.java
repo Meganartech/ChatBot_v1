@@ -22,4 +22,5 @@ public interface TriggerRepository extends JpaRepository<Trigger,Long>{
 
 
 
+
 }

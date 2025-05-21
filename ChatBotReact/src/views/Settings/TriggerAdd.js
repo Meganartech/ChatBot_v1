@@ -70,9 +70,8 @@ return (
   )
 }
 
-const TriggerAdd = () => {
+const TriggerAdd = ({triggerTypes,departments,editTriggerId}) => {
   const [triggerName, setTriggerName] = useState('')
-  const [triggerTypes, setTriggerTypes] = useState([])
   const [selectedTriggerType, setSelectedTriggerType] = useState('')
   const [delay, setDelay] = useState('No Delay')
   const [textAreaContent, setTextAreaContent] = useState('')
@@ -82,42 +81,57 @@ const TriggerAdd = () => {
   const [expandTextArea, setExpandTextArea] = useState(false)
   const [expandDepartment, setExpandDepartment] = useState(false)
   const [selectedDepartments, setSelectedDepartments] = useState([])
-  const [departments, setDepartments] = useState([])
+  
 
   const [items, setItems] = useState([])
 
   console.log(items)
+  console.log("selectedDepartments",selectedDepartments)
 
   useEffect(() => {
-    fetchDepartments()
-    fetchTriggerType()
-  }, [])
-
-  const fetchTriggerType = async () => {
-    try {
-      const response = await axios.get('http://localhost:8080/chatbot/getTriggerType')
-      setTriggerTypes(response.data)
-    } catch (error) {
-      console.error('error fetching triggertype', error)
-      setTriggerTypes([])
+    if (editTriggerId) {
+      fetchTrigger(editTriggerId);
     }
+  }, [editTriggerId]);
+
+  const fetchTrigger = async (editTriggerId) => {
+  try {
+    const response = await axios.get(`http://localhost:8080/chatbot/gettrigger/${editTriggerId}`);
+    const data = response.data;
+
+    setTriggerName(data.name);
+    setDelay(data.delay === 0 ? 'No Delay' : String(data.delay));
+    setSelectedTriggerType(data.triggerType?.id || '');
+    setItems(data.firstTrigger || []);
+
+    // Set text area if present
+    if (data.textOption && data.textOption.text) {
+      setTextAreaContent(data.textOption.text);
+      setSavedTextMessage(data.textOption.text);
+      setIsTextAreaEnabled(true);
+    }
+
+    // Set departments if present
+    if (Array.isArray(data.departments) && data.departments.length > 0) {
+  const departmentNames = data.departments.map((dep) => dep.name); 
+  setSelectedDepartments(departmentNames);
+  setIsDepartmentEnable(true);
+}
+
+
+    console.log('Fetched trigger:', data);
+  } catch (error) {
+    console.error('Error fetching trigger:', error);
+    alert('Failed to load trigger for editing.');
   }
+};
+
 
   useEffect(() => {
     if (triggerTypes.length > 0 && !selectedTriggerType) {
       setSelectedTriggerType(triggerTypes[0].id)
     }
   }, [triggerTypes])
-
-  const fetchDepartments = async () => {
-    try {
-      const response = await axios.get('http://localhost:8080/chatbot/getAllDepartment')
-      setDepartments(response.data)
-    } catch (error) {
-      console.error('Error fetching departments:', error)
-      setDepartments([])
-    }
-  }
 
   const handleAddTriggerOption = (option) => {
     if (!items.includes(option)) setItems((prev) => [...prev, option])
@@ -141,27 +155,37 @@ const TriggerAdd = () => {
   }
 
   const handleSaveTrigger = async () => {
-    try {
-      const selectedDepartmentIds = departments
-        .filter((dept) => selectedDepartments.includes(dept.depName))
-        .map((dept) => dept.id)
+  try {
+    const selectedDepartmentIds = departments
+      .filter((dept) => selectedDepartments.includes(dept.depName))
+      .map((dept) => dept.id);
 
-      const payload = {
-        name: triggerName,
-        delay: delay === 'No Delay' ? 0 : parseInt(delay),
-        triggerTypeId: Number(selectedTriggerType),
-        text: isTextAreaEnabled ? savedTextMessage : null,
-        departmentIds: isDepartmentEnable ? selectedDepartmentIds : [],
-      }
+    const payload = {
+      name: triggerName,
+      delay: delay === 'No Delay' ? 0 : parseInt(delay),
+      triggerTypeId: Number(selectedTriggerType),
+      text: isTextAreaEnabled ? savedTextMessage : null,
+      departmentIds: isDepartmentEnable ? selectedDepartmentIds : [],
+      firstTrigger: items,
+    };
 
-      const response = await axios.post('http://localhost:8080/chatbot/AddTrigger', payload)
-      console.log('Trigger saved:', response.data)
-      alert('Trigger created successfully!')
-    } catch (error) {
-      console.error('Error saving trigger:', error)
-      alert('Failed to create trigger.')
+    let response;
+    if (editTriggerId) {
+      // PATCH for update
+      response = await axios.patch(`http://localhost:8080/chatbot/UpdateTrigger/${editTriggerId}`, payload);
+      alert('Trigger updated successfully!');
+    } else {
+      // POST for create
+      response = await axios.post('http://localhost:8080/chatbot/AddTrigger', payload);
+      alert('Trigger created successfully!');
     }
+
+    console.log('Trigger saved:', response.data);
+  } catch (error) {
+    console.error('Error saving trigger:', error);
+    alert('Failed to save trigger.');
   }
+};
 
   return (
     <>
@@ -248,16 +272,18 @@ const TriggerAdd = () => {
                                 Cancel
                               </CButton>
                               <CButton
-                                color="primary"
-                                onClick={() => {
-                                  if (textAreaContent.trim()) {
-                                    setSavedTextMessage(textAreaContent.trim())
-                                    setExpandTextArea(false)
-                                  }
-                                }}
-                              >
-                                Save
-                              </CButton>
+  color="primary"
+  disabled={!textAreaContent.trim()} // disable if empty
+  onClick={() => {
+    if (textAreaContent.trim()) {
+      setSavedTextMessage(textAreaContent.trim());
+      setExpandTextArea(false);
+    }
+  }}
+>
+ Save
+</CButton>
+
                             </div>
                           </div>
                         )}
