@@ -182,8 +182,9 @@ public class AdminRegisterController {
 	            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("{\"message\": \"Incorrect password\"}");
 	        }
 	        String role = adminregister.getRole().getRole();
+	        Long id = adminregister.getId();
 	        System.out.println(role);
-	        String jwtToken = jwtUtil.generateToken(email,role);
+	        String jwtToken = jwtUtil.generateToken(email,id,role);
 	        Map<String, Object> responseBody = new HashMap<>();
 	        responseBody.put("token", jwtToken);
 	        responseBody.put("message", "Login successful");

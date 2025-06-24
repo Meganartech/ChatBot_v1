@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.VsmartEngine.Chatbot.Admin.AdminRegisterController;
-import com.VsmartEngine.Chatbot.Overview.OverviewController;
+//import com.VsmartEngine.Chatbot.Overview.OverviewController;
 
 @CrossOrigin()
 @RestController
@@ -28,8 +28,8 @@ public class FrontController {
 	@Autowired
 	private AdminRegisterController adminregistercontroller;
 	
-	@Autowired
-	private OverviewController overviewcontroller;
+//	@Autowired
+//	private OverviewController overviewcontroller;
 	
 //	@PostMapping("/register")
 //    public ResponseEntity<?> register(@RequestParam("username") String username,
@@ -46,20 +46,20 @@ public class FrontController {
 //		return adminregistercontroller.AdminLogin(loginRequest);
 //	}
 	
-	@PostMapping("/AddOverview")
-	public ResponseEntity<?> AddProperty(@RequestParam("propertyname") String propertyname,
-			@RequestParam("active") Boolean active,
-			@RequestParam("propertyurl") String propertyurl,
-			@RequestParam("propertyimage") MultipartFile propertyimage,
-			@RequestHeader("Authorization") String token){
-		return overviewcontroller.AddProperty(propertyname, active, propertyurl, propertyimage, token);
-	}
-	
-	
-	@GetMapping("/getproperty/{id}")
-	public ResponseEntity<?> getPropertyById(@PathVariable Long id) {
-		return overviewcontroller.getPropertyById(id);
-	}
+//	@PostMapping("/AddOverview")
+//	public ResponseEntity<?> AddProperty(@RequestParam("propertyname") String propertyname,
+//			@RequestParam("active") Boolean active,
+//			@RequestParam("propertyurl") String propertyurl,
+//			@RequestParam("propertyimage") MultipartFile propertyimage,
+//			@RequestHeader("Authorization") String token){
+//		return overviewcontroller.AddProperty(propertyname, active, propertyurl, propertyimage, token);
+//	}
+//	
+//	
+//	@GetMapping("/getproperty/{id}")
+//	public ResponseEntity<?> getPropertyById(@PathVariable Long id) {
+//		return overviewcontroller.getPropertyById(id);
+//	}
 	
 
 

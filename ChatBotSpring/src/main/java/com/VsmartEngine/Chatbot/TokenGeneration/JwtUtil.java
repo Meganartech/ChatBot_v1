@@ -73,13 +73,14 @@ public class JwtUtil {
                 .build();
     }
 
-    public String generateToken(String username, String role) {
+    public String generateToken(String username, Long id,String role) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + JWT_EXPIRATION_MS);
 
         return Jwts.builder()
                 .setSubject(username)
                 .claim("username", username)
+                .claim("id",id)
                 .claim("role", role)
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
@@ -96,6 +97,15 @@ public class JwtUtil {
             return false;
         }
     }
+    
+//    public boolean validateToken(String token) {
+//        try {
+//            Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
+//            return true;
+//        } catch (Exception e) {
+//            return false;
+//        }
+//    }
 
     public String getUsernameFromToken(String token) {
         try {
@@ -106,16 +116,29 @@ public class JwtUtil {
             return null;
         }
     }
+    
+    public Integer getUserIdFromToken(String token) {
+    	try {
+    		Claims claims = getParser().parseClaimsJws(token).getBody();
+            return claims.get("id", Integer.class);
+    	}
+    	catch (Exception e) {
+            logger.error("Failed to extract id from token", e);
+            return null;
+        }
+    }
 
     public String getEmailFromToken(String token) {
         try {
             Claims claims = getParser().parseClaimsJws(token).getBody();
-            return claims.get("email", String.class);
+            return claims.get("username", String.class);
         } catch (Exception e) {
             logger.error("Failed to extract email from token", e);
             return null;
         }
     }
+    
+   
 
     public String getRoleFromToken(String token) {
         try {

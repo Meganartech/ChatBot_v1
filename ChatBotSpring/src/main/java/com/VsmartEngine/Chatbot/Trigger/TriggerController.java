@@ -11,11 +11,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.VsmartEngine.Chatbot.Admin.AdminRegister;
 import com.VsmartEngine.Chatbot.Departments.Department;
@@ -57,6 +59,8 @@ public class TriggerController {
             trigger.setName(request.getName());
             trigger.setDelay(request.getDelay());
             trigger.setTriggerType(triggerType);
+            trigger.setStatus(false);
+            trigger.setFirstTrigger(request.getFirstTrigger());
 
             // Only create TextOption if text is provided
             if (request.getText() != null && !request.getText().isBlank()) {
@@ -75,12 +79,15 @@ public class TriggerController {
 
                     SetDepartment setDept = new SetDepartment();
                     setDept.setName(dept.getDepName());
+                    setDept.setDepId(deptId);
                     setDept.setTrigger(trigger);
 
                     setDepartments.add(setDept);
                 }
                 trigger.setDepartments(setDepartments);
             }
+            
+            
 
             // Save and return
             Trigger savedTrigger = triggerRepository.save(trigger);
@@ -93,8 +100,30 @@ public class TriggerController {
         }
     }
     
-    
-    
+    @Transactional
+    @PostMapping("/UpdateTriggerStatus")
+    public ResponseEntity<?> updateTriggerStatus(@RequestParam Long triggerId, @RequestParam boolean status) {
+        try {
+            // Find the trigger
+            Trigger trigger = triggerRepository.findById(triggerId)
+                    .orElseThrow(() -> new RuntimeException("Trigger not found with ID: " + triggerId));
+
+            // If setting this trigger to true, set all others to false
+            if (status) {
+                triggerRepository.updateAllStatusesToFalseExcept(triggerId);
+            }
+
+            // Update and save the current trigger
+            trigger.setStatus(status);
+            Trigger updatedTrigger = triggerRepository.save(trigger);
+
+            return ResponseEntity.ok(updatedTrigger);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Error updating trigger status: " + e.getMessage());
+        }
+    }
+
     @GetMapping("/getTriggerType")
     public ResponseEntity<List<Triggertype>> getTriggertype(){
     	try {
@@ -142,6 +171,24 @@ public class TriggerController {
 	    }
     
     
+    @GetMapping("/getTrigger")
+    public ResponseEntity<Trigger> getOneTriggerByType() {
+        try {
+            Optional<Trigger> trigger = triggerRepository.findByTriggerType_TriggerType("Basic");
+
+            if (trigger.isPresent()) {
+                return new ResponseEntity<>(trigger.get(), HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    
+    
     @DeleteMapping("/deleteTrigger/{id}")
     public ResponseEntity<String> deleteTrigger(
             @RequestHeader("Authorization") String token,
@@ -167,6 +214,71 @@ public class TriggerController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                                  .body("{\"message\": \"An error occurred while deleting the trigger.\"}");
+        }
+    }
+
+    
+    @PatchMapping("/UpdateTrigger/{id}")
+    public ResponseEntity<?> updateTrigger(@PathVariable Long id, @RequestBody TriggerRequestDto request) {
+        try {
+            // Find existing trigger
+            Trigger trigger = triggerRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Trigger not found with ID: " + id));
+
+            // Update trigger details
+            trigger.setName(request.getName());
+            trigger.setDelay(request.getDelay());
+
+            // Update trigger type
+            Triggertype triggerType = triggerTypeRepository.findById(request.getTriggerTypeId())
+                    .orElseThrow(() -> new RuntimeException("Trigger type not found"));
+            trigger.setTriggerType(triggerType);
+
+            trigger.setFirstTrigger(request.getFirstTrigger());
+
+            // Update text option
+            if (request.getText() != null && !request.getText().isBlank()) {
+                if (trigger.getTextOption() != null) {
+                    trigger.getTextOption().setText(request.getText());
+                } else {
+                    TextOption textOption = new TextOption();
+                    textOption.setText(request.getText());
+                    textOption.setTrigger(trigger);
+                    trigger.setTextOption(textOption);
+                }
+            } else {
+                // Optionally remove text option if no text provided
+                trigger.setTextOption(null);
+            }
+
+         // Update departments properly:
+            if (request.getDepartmentIds() != null) {
+                // Clear existing departments instead of replacing the collection
+                trigger.getDepartments().clear();
+
+                for (Long deptId : request.getDepartmentIds()) {
+                    Department dept = departmentrepository.findById(deptId)
+                            .orElseThrow(() -> new RuntimeException("Department not found: " + deptId));
+
+                    SetDepartment setDept = new SetDepartment();
+                    setDept.setName(dept.getDepName());
+                    setDept.setTrigger(trigger);
+
+                    trigger.getDepartments().add(setDept);
+                }
+            } else {
+                // Clear all departments if none provided
+                trigger.getDepartments().clear();
+            }
+
+
+            // Save updates
+            Trigger updatedTrigger = triggerRepository.save(trigger);
+            return ResponseEntity.ok(updatedTrigger);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Error updating trigger: " + e.getMessage());
         }
     }
 

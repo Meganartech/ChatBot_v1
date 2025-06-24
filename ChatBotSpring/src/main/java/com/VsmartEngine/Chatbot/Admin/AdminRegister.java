@@ -47,10 +47,9 @@ public class AdminRegister {
 	private String code;
 		
 	@ManyToOne
-	@JoinColumn(name = "department_id")
-	@JsonBackReference
-	private Department department;
-
+    @JoinColumn(name = "department_id")
+    @JsonBackReference
+    private Department department;
 
 	public AdminRegister() {
 		super();

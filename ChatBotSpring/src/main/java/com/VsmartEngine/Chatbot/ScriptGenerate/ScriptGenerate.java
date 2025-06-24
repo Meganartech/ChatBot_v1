@@ -1,9 +1,12 @@
 package com.VsmartEngine.Chatbot.ScriptGenerate;
 
+import java.util.List;
 import java.util.UUID;
 
+import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -33,25 +36,27 @@ public class ScriptGenerate {
 
 	    @Lob
 	    @Column(name = "Logo", length = 1000000)
+	    @Basic(fetch = FetchType.EAGER)
 	    private byte[] logo;
 
 	    private String heading;
 
 	    private String TextArea;
 
-	    private String logoAlign; // left, center, right
+	    private String logoAlign; 
 	    private String headingAlign;
 	    private String TextAlign;
-
+	    
+	    private List<String> appearence;
 
 	public ScriptGenerate() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-
+	
 	public ScriptGenerate(UUID id, String propertyName, String websiteURL, String widgetScript, String buttonColor,
 			String language, byte[] logo, String heading, String textArea, String logoAlign, String headingAlign,
-			String textAlign) {
+			String textAlign, List<String> appearence) {
 		super();
 		this.id = id;
 		this.propertyName = propertyName;
@@ -65,6 +70,7 @@ public class ScriptGenerate {
 		this.logoAlign = logoAlign;
 		this.headingAlign = headingAlign;
 		TextAlign = textAlign;
+		this.appearence = appearence;
 	}
 
 	public UUID getId() {
@@ -161,6 +167,14 @@ public class ScriptGenerate {
 
 	public void setTextAlign(String textAlign) {
 		TextAlign = textAlign;
+	}
+
+	public List<String> getAppearence() {
+		return appearence;
+	}
+
+	public void setAppearence(List<String> appearence) {
+		this.appearence = appearence;
 	}
 	
 }
