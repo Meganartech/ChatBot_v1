@@ -25,8 +25,6 @@ import {
   cilAccountLogout,
   cilUser,
 } from '@coreui/icons'
-import { AppBreadcrumb } from './index'
-import { AppHeaderDropdown } from './header/index'
 
 const AppHeader = () => {
   const headerRef = useRef()
@@ -38,15 +36,27 @@ const AppHeader = () => {
 
   const [admin, setAdmin] = useState(null)
 
-  // Fetch Admin from localStorage
   useEffect(() => {
     const storedAdmin = localStorage.getItem("admin")
     if (storedAdmin) {
-      setAdmin(JSON.parse(storedAdmin))
+      const parsedAdmin = JSON.parse(storedAdmin)
+
+      // Prefix image path with backend URL if necessary
+      if (parsedAdmin.image_path && !parsedAdmin.image_path.startsWith('http')) {
+        parsedAdmin.imageUrl = `http://localhost:8080/${parsedAdmin.image_path}`
+        
+      }
+
+      setAdmin(parsedAdmin)
     }
   }, [])
 
-  // Scroll Shadow Effect
+  useEffect(() => {
+    if (admin?.imageUrl) {
+      localStorage.setItem("admin", JSON.stringify(admin))
+    }
+  }, [admin?.imageUrl])
+
   useEffect(() => {
     const handleScroll = () => {
       if (headerRef.current) {
@@ -56,37 +66,6 @@ const AppHeader = () => {
     document.addEventListener('scroll', handleScroll)
     return () => document.removeEventListener('scroll', handleScroll)
   }, [])
-
-  // Token Validation
-  // useEffect(() => {
-  //   const token = localStorage.getItem('token')
-  //   if (!token) return navigate('/login')
-
-  //   const validateToken = async () => {
-  //     try {
-  //       const res = await fetch('http://localhost:8080/auth/validate', {
-  //         method: 'POST',
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       })
-  //       const data = await res.json()
-  //       if (data.status !== 'success') {
-  //         toast.error("Session expired. Please login again.")
-  //         localStorage.removeItem("token")
-  //         localStorage.removeItem("admin")
-  //         navigate('/login')
-  //       }
-  //     } catch (err) {
-  //       toast.error("Session validation failed!")
-  //       navigate('/login')
-  //     }
-  //   }
-
-  //   validateToken()
-  //   const interval = setInterval(validateToken, 30000)
-  //   return () => clearInterval(interval)
-  // }, [location])
 
   const handleLogout = async () => {
     try {
@@ -121,6 +100,7 @@ const AppHeader = () => {
           <CNavItem>
             <CNavLink to="/dashboard" as={NavLink}>
               Dashboard
+              
             </CNavLink>
           </CNavItem>
         </CHeaderNav>
@@ -166,8 +146,29 @@ const AppHeader = () => {
 
           {/* Profile Dropdown */}
           <CDropdown variant="nav-item" placement="bottom-end">
-            <CDropdownToggle caret={false}>
-              <CIcon icon={cilUser} size="lg" />
+            <CDropdownToggle caret={false} className="d-flex align-items-center">
+    {admin?.image_path ? (
+  <img
+    src={`http://localhost:8080/${admin.image_path}`}
+    alt="profile"
+    style={{
+      width: '32px',
+      height: '32px',
+      borderRadius: '50%',
+      objectFit: 'cover',
+      marginRight: '8px',
+    }}
+  />
+) : (
+  <>
+    <CIcon icon={cilUser} size="lg" className="me-2" />
+    {console.log(admin?.image_path, "admin image path")}
+  </>
+)}
+
+<h1>{admin?.image_path}</h1>
+
+
               <span className="ms-2">{admin?.name || 'Admin'}</span>
             </CDropdownToggle>
             <CDropdownMenu>
@@ -181,10 +182,6 @@ const AppHeader = () => {
           </CDropdown>
         </CHeaderNav>
       </CContainer>
-
-      {/* <CContainer className="px-4" fluid>
-        <AppBreadcrumb />
-      </CContainer> */}
     </CHeader>
   )
 }
