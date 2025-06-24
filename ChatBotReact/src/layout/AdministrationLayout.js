@@ -101,46 +101,46 @@ const AdministrationLayout = () => {
         <CRow className="g-0" style={{ height: '100%' }}>
           <CCol sm={3} md={2} className="border-end" style={{ height: '100%', overflowY: 'auto' }}>
             <div>
-              <h6 className="fw-bold mb-3 large p-3">Administration</h6>
-              <CButton color={getButtonColor('Overview')} className="w-100 text-start mb-2 py-2 px-2 small" onClick={() => handleTabClick('Overview')}>
-                <FontAwesomeIcon icon={faTableColumns} className="me-2" /> Overview
+              <h6 className="fw-bold mb-3   large p-3">Administration</h6>
+              <CButton color={getButtonColor('Overview')} className="w-100 text-start mb-2 py-2 px-4 small " onClick={() => handleTabClick('Overview')}>
+                <FontAwesomeIcon icon={faTableColumns} className="me-2 opacity-75 opacity-75" /> Overview
               </CButton>
-              <CButton className="w-100 text-start mb-1 py-2 px-2 small" onClick={() => setIsChannelsOpen(!isChannelsOpen)}>
-                <FontAwesomeIcon icon={faSliders} className="me-2" /> Channels
+              <CButton className="w-100 text-start mb-1 py-2 px-4 small" onClick={() => setIsChannelsOpen(!isChannelsOpen)}>
+                <FontAwesomeIcon icon={faSliders} className="me-2 opacity-75" /> Channels
                 <span className="float-end">{isChannelsOpen ? '˅' : '›'}</span>
               </CButton>
               {isChannelsOpen && (
                 <div>
-                  <CButton color={getButtonColor('Chat Widget')} className="text-dark text-start w-100 py-2 px-2 mb-1 small " onClick={() => handleTabClick('Chat Widget')}>
-                    <FontAwesomeIcon icon={faCommentAlt} className="me-2" /> Chat Widget
+                  <CButton color={getButtonColor('Chat Widget')} className="text-dark text-start w-100 py-2 px-4 mb-1 small " onClick={() => handleTabClick('Chat Widget')}>
+                    <FontAwesomeIcon icon={faCommentAlt} className="me-2 opacity-75" /> Chat Widget
                   </CButton>
-                  <CButton color={getButtonColor('Widget Content')} className="text-dark text-start w-100 py-2 px-2 mb-1 small " onClick={() => handleTabClick('Widget Content')}>
-                    <FontAwesomeIcon icon={faImage} className="me-2" /> Widget Content
+                  <CButton color={getButtonColor('Widget Content')} className="text-dark text-start w-100 py-2 px-4 mb-1 small " onClick={() => handleTabClick('Widget Content')}>
+                    <FontAwesomeIcon icon={faImage} className="me-2 opacity-75" /> Widget Content
                   </CButton>
                 </div>
               )}
-              <CButton color={getButtonColor('Settings')} className="w-100 text-start mb-2 py-2 px-2 small " onClick={() => setIsSettingOpen(!isSettingOpen)}>
-                <FontAwesomeIcon icon={faGear} className="me-2" /> Settings
+              <CButton color={getButtonColor('Settings')} className="w-100 text-start mb-2 py-2 px-4 small " onClick={() => setIsSettingOpen(!isSettingOpen)}>
+                <FontAwesomeIcon icon={faGear} className="me-2 opacity-75" /> Settings
                 <span className="float-end">{isSettingOpen ? '˅' : '›'}</span>
               </CButton>
               {isSettingOpen && (
                 <div>
-                  <CButton color={getButtonColor('Trigger')} className="text-dark text-start w-100 py-2 px-2 mb-1 small " onClick={() => handleTabClick('Trigger')}>
-                    <FontAwesomeIcon icon={faCommentAlt} className="me-2" /> Trigger
+                  <CButton color={getButtonColor('Trigger')} className="text-dark text-start w-100 py-2 px-4 mb-1 small " onClick={() => handleTabClick('Trigger')}>
+                    <FontAwesomeIcon icon={faCommentAlt} className="me-2 opacity-75" /> Trigger
                   </CButton>
                 </div>
               )}
-              <CButton className="w-100 text-start mb-1 py-2 px-2 small " onClick={() => setIsUserManagementOpen(!isUserManagementOpen)}>
-                <FontAwesomeIcon icon={faUserGear} className="me-2" /> User Management
+              <CButton className="w-100 text-start mb-1 py-2 px-4 small " onClick={() => setIsUserManagementOpen(!isUserManagementOpen)}>
+                <FontAwesomeIcon icon={faUserGear} className="me-2 opacity-75" /> User Management
                 <span className="float-end">{isUserManagementOpen ? '˅' : '›'}</span>
               </CButton>
               {isUserManagementOpen && (
                 <div >
-                  <CButton color={getButtonColor('Property Members')} className="text-dark text-start w-100 py-2 px-2 mb-1 small " onClick={() => handleTabClick('Property Members')}>
-                    <FontAwesomeIcon icon={faCommentAlt} className="me-2" /> Property Members
+                  <CButton color={getButtonColor('Property Members')} className="text-dark text-start w-100 py-2 px-4 mb-1 small " onClick={() => handleTabClick('Property Members')}>
+                    <FontAwesomeIcon icon={faCommentAlt} className="me-2 opacity-75" /> Property Members
                   </CButton>
-                  <CButton color={getButtonColor('Departments')} className="text-dark text-start w-100 py-2 px-2 mb-1 small " onClick={() => handleTabClick('Departments')}>
-                    <FontAwesomeIcon icon={faImage} className="me-2" /> Departments
+                  <CButton color={getButtonColor('Departments')} className="text-dark text-start w-100 py-2 px-4 mb-1 small " onClick={() => handleTabClick('Departments')}>
+                    <FontAwesomeIcon icon={faImage} className="me-2 opacity-75" /> Departments
                   </CButton>
                 </div>
               )}
