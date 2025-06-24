@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.VsmartEngine.Chatbot.Admin.AdminRegister;
 import com.VsmartEngine.Chatbot.Departments.Department;
@@ -58,6 +59,7 @@ public class TriggerController {
             trigger.setName(request.getName());
             trigger.setDelay(request.getDelay());
             trigger.setTriggerType(triggerType);
+            trigger.setStatus(false);
             trigger.setFirstTrigger(request.getFirstTrigger());
 
             // Only create TextOption if text is provided
@@ -77,6 +79,7 @@ public class TriggerController {
 
                     SetDepartment setDept = new SetDepartment();
                     setDept.setName(dept.getDepName());
+                    setDept.setDepId(deptId);
                     setDept.setTrigger(trigger);
 
                     setDepartments.add(setDept);
@@ -97,8 +100,30 @@ public class TriggerController {
         }
     }
     
-    
-    
+    @Transactional
+    @PostMapping("/UpdateTriggerStatus")
+    public ResponseEntity<?> updateTriggerStatus(@RequestParam Long triggerId, @RequestParam boolean status) {
+        try {
+            // Find the trigger
+            Trigger trigger = triggerRepository.findById(triggerId)
+                    .orElseThrow(() -> new RuntimeException("Trigger not found with ID: " + triggerId));
+
+            // If setting this trigger to true, set all others to false
+            if (status) {
+                triggerRepository.updateAllStatusesToFalseExcept(triggerId);
+            }
+
+            // Update and save the current trigger
+            trigger.setStatus(status);
+            Trigger updatedTrigger = triggerRepository.save(trigger);
+
+            return ResponseEntity.ok(updatedTrigger);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Error updating trigger status: " + e.getMessage());
+        }
+    }
+
     @GetMapping("/getTriggerType")
     public ResponseEntity<List<Triggertype>> getTriggertype(){
     	try {

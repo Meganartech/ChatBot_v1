@@ -6,6 +6,7 @@ import java.util.List;
 import com.VsmartEngine.Chatbot.Admin.AdminRegister;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -31,15 +32,6 @@ public class Department {
 	
 	@Column(name="description")
 	private String description;
-	
-//	@ManyToMany
-//    @JoinTable(
-//        name = "department_admins",
-//        joinColumns = @JoinColumn(name = "department_id"),
-//        inverseJoinColumns = @JoinColumn(name = "admin_id")
-//    )
-//	@JsonManagedReference // This side will be serialized
-//    private List<AdminRegister> admins = new ArrayList<>();
 	
 	@OneToMany(mappedBy = "department")
 	@JsonManagedReference
@@ -92,3 +84,13 @@ public class Department {
 	}
 
 }
+
+
+//@ManyToMany
+//@JoinTable(
+//  name = "department_admins",
+//  joinColumns = @JoinColumn(name = "department_id"),
+//  inverseJoinColumns = @JoinColumn(name = "admin_id")
+//)
+//@JsonManagedReference // This side will be serialized
+//private List<AdminRegister> admins = new ArrayList<>();

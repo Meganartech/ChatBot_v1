@@ -1,5 +1,6 @@
 package com.VsmartEngine.Chatbot.UserInfo;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import jakarta.persistence.Column;
@@ -21,23 +22,33 @@ public class UserInfo {
 	
 	@Column(unique = true)
 	private String email;
+	
+	private String role;
+	
+	private String token;
+	
+	private LocalDateTime lastSeen;
 
 	public UserInfo() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public UserInfo(Long id, String username, String email) {
+	public UserInfo(Long id, String username, String email, String role, String token, LocalDateTime lastSeen) {
 		super();
 		this.id = id;
 		this.username = username;
 		this.email = email;
+		this.role = role;
+		this.token = token;
+		this.lastSeen = lastSeen;
 	}
-	
-	public UserInfo(String username, String email) {
+
+	public UserInfo(String username, String email, String role) {
 		super();
 		this.username = username;
 		this.email = email;
+		this.role = role;
 	}
 
 	public Long getId() {
@@ -63,5 +74,29 @@ public class UserInfo {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	
+
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
+	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
+	}
+
+	public LocalDateTime getLastSeen() {
+		return lastSeen;
+	}
+
+	public void setLastSeen(LocalDateTime lastSeen) {
+		this.lastSeen = lastSeen;
+	}
+
 }

@@ -20,6 +20,8 @@ public class SetDepartment {
 	 private Long id;
 
 	 private String name;
+	 
+	 private Long DepId;
 
 	 @ManyToOne
 	 @JoinColumn(name = "triggerid")
@@ -31,10 +33,11 @@ public class SetDepartment {
 		// TODO Auto-generated constructor stub
 	}
 
-	public SetDepartment(Long id, String name, Trigger trigger) {
+	public SetDepartment(Long id, String name, Long depId, Trigger trigger) {
 		super();
 		this.id = id;
 		this.name = name;
+		DepId = depId;
 		this.trigger = trigger;
 	}
 
@@ -61,5 +64,13 @@ public class SetDepartment {
 	public void setTrigger(Trigger trigger) {
 		this.trigger = trigger;
 	}
+	
+	public Long getDepId() {
+		return DepId;
+	}
 
+	public void setDepId(Long depId) {
+		DepId = depId;
+	}
+	
 }

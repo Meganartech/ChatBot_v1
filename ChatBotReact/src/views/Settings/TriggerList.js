@@ -1,22 +1,18 @@
 import React, { useState,useEffect } from "react";
 import axios from "axios";
 import {
-  CCard,
   CCardHeader,
   CCardBody,
-  CFormInput,
   CButton,
   CRow,
   CCol,
-  CInputGroup,
-  CInputGroupText,
   CTable,
   CTableBody,
-  CTableCaption,
   CTableDataCell,
   CTableHead,
   CTableHeaderCell,
   CTableRow,
+  CFormSwitch,
 } from '@coreui/react'
 import { FaSearch, FaPlus } from 'react-icons/fa'
 import { FaEdit, FaTrash } from 'react-icons/fa'; // Import the icons
@@ -26,6 +22,8 @@ const TriggerList = ({token,GetTrigger,onAddTriggerClick,refreshTrigger,Edit}) =
 
   const [selectedTrigger, setSelectedTrigger] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
+  const [status,setStatus] = useState('');
+
   console.log("trigger",GetTrigger)
 
   const handleSelectAll = () => {
@@ -45,6 +43,35 @@ const TriggerList = ({token,GetTrigger,onAddTriggerClick,refreshTrigger,Edit}) =
       setSelectedTrigger([...selectedTrigger, id]);
     }
   };
+
+  const handleStatusChange = async (triggerId, newStatus) => {
+  try {
+    const formData = new FormData();
+    formData.append("triggerId", triggerId);
+    formData.append("status", newStatus);
+
+    const response = await axios.post(
+      "http://localhost:8080/chatbot/UpdateTriggerStatus",
+      formData,
+      {
+        headers: {
+          Authorization: token,
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+
+    if (response.status === 200) {
+      console.log("Status updated successfully");
+      refreshTrigger(); // refresh list to reflect updated status
+    } else {
+      console.log(response.data || "Update failed!");
+    }
+  } catch (error) {
+    console.log(error.response?.data || "Error updating status!");
+  }
+};
+
 
   const handleDelete = async (triggerId) => {
     try{
@@ -99,8 +126,9 @@ const TriggerList = ({token,GetTrigger,onAddTriggerClick,refreshTrigger,Edit}) =
                   onChange={handleSelectAll}
                 />
               </CTableHeaderCell>
-              <CTableHeaderCell scope="col" style={{ backgroundColor: '#F3F4F7', width: '30%' }}>Name</CTableHeaderCell>
-              <CTableHeaderCell scope="col" style={{ backgroundColor: '#F3F4F7'}}>Description</CTableHeaderCell>
+              <CTableHeaderCell scope="col" style={{ backgroundColor: '#F3F4F7', width: '20%' }}>Name</CTableHeaderCell>
+              <CTableHeaderCell scope="col" style={{ backgroundColor: '#F3F4F7', width:'40%'}}>Description</CTableHeaderCell>
+              <CTableHeaderCell scope="col" style={{ backgroundColor: '#F3F4F7'}}>Status</CTableHeaderCell>
               <CTableHeaderCell scope="col" style={{ backgroundColor: '#F3F4F7'}}>Type</CTableHeaderCell>
               <CTableHeaderCell scope="col" style={{ backgroundColor: '#F3F4F7',width:'10%'}}>Action</CTableHeaderCell>
              </CTableRow>
@@ -113,12 +141,20 @@ const TriggerList = ({token,GetTrigger,onAddTriggerClick,refreshTrigger,Edit}) =
                       <input
                         type="checkbox"
                         checked={selectedTrigger.includes(trigger.triggerid)}
-                        onChange={() => handleRowCheckboxChange(trigger.triggerid)}
+                        onClick={() => handleRowCheckboxChange(trigger.triggerid)}
                       />
                     </CTableHeaderCell>
             
                     <CTableDataCell>{trigger.name}</CTableDataCell>
-                    <CTableDataCell>{trigger.textOption.text}</CTableDataCell>
+                    <CTableDataCell>{trigger.textOption?.text || ''}</CTableDataCell>
+                   <CTableDataCell>
+  <CFormSwitch 
+    id={`status-${trigger.triggerid}`}
+    checked={trigger.status}
+    onChange={() => handleStatusChange(trigger.triggerid, !trigger.status)}
+  />
+</CTableDataCell>
+
                     <CTableDataCell>{trigger.triggerType.triggerType}</CTableDataCell>
             
                     <CTableDataCell>
@@ -147,7 +183,7 @@ const TriggerList = ({token,GetTrigger,onAddTriggerClick,refreshTrigger,Edit}) =
                 ))
               ) : (
                 <CTableRow>
-                  <CTableDataCell colSpan="5" className="text-center">
+                  <CTableDataCell colSpan="6" className="text-center">
                     No Trigger available.
                   </CTableDataCell>
                 </CTableRow>

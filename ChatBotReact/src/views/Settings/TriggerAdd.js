@@ -220,6 +220,7 @@ const TriggerAdd = ({triggerTypes,departments,editTriggerId}) => {
               <CFormLabel>Delay</CFormLabel>
               <CFormSelect value={delay} onChange={(e) => setDelay(e.target.value)}>
                 <option>No Delay</option>
+                <option>1</option>
                 <option>5</option>
                 <option>10</option>
               </CFormSelect>

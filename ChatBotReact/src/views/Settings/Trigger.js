@@ -71,6 +71,7 @@ const Trigger = () => {
       if (location.pathname.endsWith('/Trigger')) {
         setIsOpenAddTrigger(false);
         setEditTriggerId(undefined); // ✅ clear edit mode
+        fetchTriggers();
       }
     }, [location]);
   return (

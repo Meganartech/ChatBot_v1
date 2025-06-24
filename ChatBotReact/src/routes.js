@@ -3,7 +3,8 @@ import AdministrationLayout from './layout/AdministrationLayout'
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
 const Channels = React.lazy(() => import('./views/property/widgets/MainWidget'))
 // Base
-const Chats = React.lazy(() => import('./views/base/chats/chats'))
+// const Chats = React.lazy(() => import('./views/base/chats/chats'))
+const Chats = React.lazy(() => import('./views/Chats/Chats'))
 // const Overview = React.lazy(() => import('./views/Overview/Overview'))
 
 const routes = [

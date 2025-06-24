@@ -36,11 +36,14 @@ public class Trigger {
 	@JsonManagedReference
     private TextOption textOption;
 	
+	
 	@OneToMany(mappedBy = "trigger", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonManagedReference
     private List<SetDepartment> departments = new ArrayList<>();
 	
 	private List<String> firstTrigger;
+	
+	private boolean status;
 
 	public Trigger() {
 		super();
@@ -48,7 +51,7 @@ public class Trigger {
 	}
 
 	public Trigger(long triggerid, String name, int delay, Triggertype triggerType, TextOption textOption,
-			List<SetDepartment> departments, List<String> firstTrigger) {
+			List<SetDepartment> departments, List<String> firstTrigger, boolean status) {
 		super();
 		this.triggerid = triggerid;
 		this.name = name;
@@ -57,6 +60,7 @@ public class Trigger {
 		this.textOption = textOption;
 		this.departments = departments;
 		this.firstTrigger = firstTrigger;
+		this.status = status;
 	}
 
 	public long getTriggerid() {
@@ -113,6 +117,14 @@ public class Trigger {
 
 	public void setFirstTrigger(List<String> firstTrigger) {
 		this.firstTrigger = firstTrigger;
+	}
+
+	public boolean isStatus() {
+		return status;
+	}
+
+	public void setStatus(boolean status) {
+		this.status = status;
 	}
 		
 }

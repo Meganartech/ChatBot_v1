@@ -10,12 +10,13 @@ public class TriggerRequestDto {
     private String text; // Optional
     private List<Long> departmentIds; // IDs of selected departments
     private List<String> firstTrigger;
+    private boolean status;
 	public TriggerRequestDto() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 	public TriggerRequestDto(String name, int delay, Long triggerTypeId, String text, List<Long> departmentIds,
-			List<String> firstTrigger) {
+			List<String> firstTrigger, boolean status) {
 		super();
 		this.name = name;
 		this.delay = delay;
@@ -23,6 +24,7 @@ public class TriggerRequestDto {
 		this.text = text;
 		this.departmentIds = departmentIds;
 		this.firstTrigger = firstTrigger;
+		this.status = status;
 	}
 	public String getName() {
 		return name;
@@ -62,5 +64,10 @@ public class TriggerRequestDto {
 	public void setFirstTrigger(List<String> firstTrigger) {
 		this.firstTrigger = firstTrigger;
 	}
-
+	public boolean isStatus() {
+		return status;
+	}
+	public void setStatus(boolean status) {
+		this.status = status;
+	}
 }

@@ -25,6 +25,7 @@ import com.VsmartEngine.Chatbot.TokenGeneration.JwtUtil;
 
 
 @CrossOrigin()
+//@CrossOrigin(origins = "http://127.0.0.1:5500")
 @RequestMapping("/chatbot")
 @Controller
 public class DepartmentController {
@@ -37,53 +38,7 @@ public class DepartmentController {
 	
 	@Autowired
 	private JwtUtil jwtUtil;
-	
-//	@PostMapping("/adddepartment")
-//	public ResponseEntity<?> addDepartment(@RequestBody DepartmentRequestDto departmentRequest,@RequestHeader("Authorization") String token) {
-//	    try {
-//	    	
-//	    	String roles =  jwtUtil.getRoleFromToken(token);
-//
-//	        if (!"ADMIN".equals(roles)) {
-//	            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("{\"message\": \"Only admin can add departments\"}");
-//	        }
-//	    	 
-//	        // Check if adminIds are null or empty
-//	        if (departmentRequest.getAdminIds() == null || departmentRequest.getAdminIds().isEmpty()) {
-//	            return ResponseEntity.badRequest().body("Admin IDs must not be empty.");
-//	        }
-//
-//	        Department department = new Department();
-//	        department.setDepName(departmentRequest.getDepName());
-//	        department.setDescription(departmentRequest.getDescription());
-//
-////	         Fetch admins by the provided admin IDs
-//	        List<AdminRegister> admins = adminregisterrepository.findAllById(departmentRequest.getAdminIds());
-//	        
-//	        // If no admins found, return a bad request response
-//	        if (admins.isEmpty()) {
-//	            return ResponseEntity.badRequest().body("No valid admins found for the provided IDs.");
-//	        }
-//
-//	        department.setAdmins(admins);
-//
-//	        // Save department
-//	        Department savedDepartment = departmentrepository.save(department);
-//
-//	        return ResponseEntity.ok(savedDepartment);
-//	        
-//	    } catch (InvalidDataAccessApiUsageException e) {
-//	        // Handle specific exception and return a custom message
-//	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-//	                             .body("Error occurred while processing the department request: " + e.getMessage());
-//	    } catch (Exception e) {
-//	        // Catch any other unexpected exceptions
-//	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-//	                             .body("An unexpected error occurred: " + e.getMessage());
-//	    }
-//	}
-	
-	
+		
 	@PostMapping("/adddepartment")
 	public ResponseEntity<?> addDepartment(@RequestBody DepartmentRequestDto departmentRequest,
 	                                       @RequestHeader("Authorization") String token) {
@@ -155,33 +110,44 @@ public class DepartmentController {
 	        return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
-	
+		
 	@DeleteMapping("/deleteDep/{id}")
 	public ResponseEntity<String> delete(
-	        @RequestHeader("Authorization") String token, 
+	        @RequestHeader("Authorization") String token,
 	        @PathVariable Long id
 	) {
 	    try {
-	        // Extract role from the token
 	        String role = jwtUtil.getRoleFromToken(token);
-	        System.out.println("role: " + role);
-
-	        // Check if the role is "ADMIN"
 	        if (!"ADMIN".equals(role)) {
-	            // Return a Forbidden response if the role is not "ADMIN"
 	            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-	                                 .body("{\"message\": \"Only admin can delete department\"}");
+	                    .body("{\"message\": \"Only admin can delete department\"}");
 	        }
 
-	        // Perform the delete operation if the role is "ADMIN"
-	        departmentrepository.deleteById(id);
+	        Optional<Department> optionalDepartment = departmentrepository.findById(id);
+	        if (optionalDepartment.isEmpty()) {
+	            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+	                    .body("{\"message\": \"Department not found\"}");
+	        }
 
-	        // Return a success message with 204 status
+	        Department department = optionalDepartment.get();
+
+	        // Disassociate all linked admins
+	        List<AdminRegister> admins = department.getAdmins();
+	        for (AdminRegister admin : admins) {
+	            admin.setDepartment(null); // Break FK relation
+	        }
+
+	        adminregisterrepository.saveAll(admins); // Persist changes
+
+	        departmentrepository.deleteById(id); // Safe delete
+
 	        return ResponseEntity.status(HttpStatus.NO_CONTENT)
-	                             .body("{\"message\": \"department deleted successfully\"}");
+	                .body("{\"message\": \"Department deleted successfully\"}");
+
 	    } catch (Exception e) {
+	        e.printStackTrace();
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-	                             .body("{\"message\": \"An error occurred while deleting the department.\"}");
+	                .body("{\"message\": \"An error occurred while deleting the department.\"}");
 	    }
 	}
 
@@ -264,9 +230,5 @@ public class DepartmentController {
 	                .body("{\"message\": \"Error while updating department\"}");
 	    }
 	}
-
 	
-	
-	
-
 }
