@@ -131,7 +131,11 @@
 			<artifactId>spring-boot-starter-tomcat</artifactId>
 		    <scope>provided</scope> 
 		</dependency>
-		 	
+		 	<dependency>
+    <groupId>javax.validation</groupId>
+    <artifactId>validation-api</artifactId>
+    <version>2.0.0.Final</version>
+</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
@@ -147,6 +151,7 @@
     <artifactId>spring-security-crypto</artifactId>
     <version>5.7.1</version> <!-- or whatever version matches your Spring Boot version -->
 </dependency>
+
 	</dependencies>
 	
 	<build>
