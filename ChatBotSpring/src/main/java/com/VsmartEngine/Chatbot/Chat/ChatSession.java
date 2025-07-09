@@ -1,5 +1,6 @@
 package com.VsmartEngine.Chatbot.Chat;
 
+import java.time.LocalDateTime;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -10,81 +11,75 @@ import jakarta.persistence.Table;
 @Table
 public class ChatSession {
 	
-	 @Id
-	 @GeneratedValue(strategy = GenerationType.IDENTITY)
-	 private Long sessionid;
-	 
-	 private Long userId;
-	 
-	 private Long adminId;
-	 
-	 private Long senderid;
-	 
-	 private Long receiverid;
-	 
-	 private boolean status;
+	@Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+	
+	private String sessionId;
+
+    private String sender;   // user email or ID
+    private String receiver; // admin email or ID
+
+    private LocalDateTime createdTime;
 
 	public ChatSession() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public ChatSession(Long sessionid, Long userId, Long adminId, Long senderid, Long receiverid, boolean status) {
+	public ChatSession(Long id, String sessionId, String sender, String receiver, LocalDateTime createdTime) {
 		super();
-		this.sessionid = sessionid;
-		this.userId = userId;
-		this.adminId = adminId;
-		this.senderid = senderid;
-		this.receiverid = receiverid;
-		this.status = status;
+		this.id = id;
+		this.sessionId = sessionId;
+		this.sender = sender;
+		this.receiver = receiver;
+		this.createdTime = createdTime;
 	}
 
-	public Long getSessionid() {
-		return sessionid;
+	public ChatSession(String sender, String receiver) {
+		super();
+		this.sender = sender;
+		this.receiver = receiver;
 	}
 
-	public void setSessionid(Long sessionid) {
-		this.sessionid = sessionid;
+	public Long getId() {
+		return id;
 	}
 
-	public Long getSenderid() {
-		return senderid;
+	public void setId(Long id) {
+		this.id = id;
 	}
 
-	public void setSenderid(Long senderid) {
-		this.senderid = senderid;
+	public String getSessionId() {
+		return sessionId;
 	}
 
-	public Long getReceiverid() {
-		return receiverid;
+	public void setSessionId(String sessionId) {
+		this.sessionId = sessionId;
 	}
 
-	public void setReceiverid(Long receiverid) {
-		this.receiverid = receiverid;
+	public String getSender() {
+		return sender;
 	}
 
-	public boolean isStatus() {
-		return status;
+	public void setSender(String sender) {
+		this.sender = sender;
 	}
 
-	public void setStatus(boolean status) {
-		this.status = status;
+	public String getReceiver() {
+		return receiver;
 	}
 
-	public Long getUserId() {
-		return userId;
+	public void setReceiver(String receiver) {
+		this.receiver = receiver;
 	}
 
-	public void setUserId(Long userId) {
-		this.userId = userId;
+	public LocalDateTime getCreatedTime() {
+		return createdTime;
 	}
 
-	public Long getAdminId() {
-		return adminId;
-	}
-
-	public void setAdminId(Long adminId) {
-		this.adminId = adminId;
+	public void setCreatedTime(LocalDateTime createdTime) {
+		this.createdTime = createdTime;
 	}
 	
 }
