@@ -494,290 +494,231 @@ public class ScriptGenerateController {
                 return ResponseEntity.ok(js);
             }
             
-            
             @PostMapping(value = "/widget/chat/{id}", produces = "application/javascript")
             public ResponseEntity<String> handleUserSubmit(
                     @PathVariable UUID id,
                     @RequestParam String username,
                     @RequestParam String email) {
 
-                String role = "USER";
-                UserInfo user;
-                
-                Optional<UserInfo> optUser = userinforepository.findByEmail(email);
-                if (optUser.isPresent()) {
-                    user = optUser.get();
-                } else {
-                    user = new UserInfo();
-                    user.setUsername(username);
-                    user.setEmail(email);
-                    user.setRole(role);
-                    user = userinforepository.save(user); // Save to generate ID
-                }
+                try {
+                    String role = "USER";
+                    UserInfo user = userinforepository.findByEmail(email)
+                            .orElseGet(() -> userinforepository.save(new UserInfo(username, email, role)));
 
-                String senderIdStr = String.valueOf(user.getId());
-                String jwtToken = jwtUtil.generateToken(email, user.getId(), role);
-                user.setToken(jwtToken);
-                userinforepository.save(user);
-                
-                System.out.println("jwtToken" + jwtToken);
+                    String senderIdStr = user.getEmail();
+                    String jwtToken = jwtUtil.generateToken(email, user.getId(), role);
+                    user.setToken(jwtToken);
+                    userinforepository.save(user);
 
-                ScriptGenerate script = scriptgeneraterepository.findById(id)
-                        .orElseThrow(() -> new RuntimeException("Widget not found"));
-                String buttonColor = script.getButtonColor() != null ? script.getButtonColor() : "#007bff";
-
-                Trigger trigger = triggerRepository.findByStatusTrue()
-                        .orElseThrow(() -> new RuntimeException("Active trigger not found"));
-
-                List<String> appearanceOrder = script.getAppearence();
-                StringBuilder headerContent = new StringBuilder();
-                for (String item : appearanceOrder) {
-                    switch (item) {
-                        case "Logo" -> {
-                            if (script.getLogo() != null) {
-                                String base64Img = Base64.getEncoder().encodeToString(script.getLogo());
-                                headerContent.append("<div style='text-align:").append(script.getLogoAlign()).append(";'>")
-                                        .append("<img src='data:image/png;base64,").append(base64Img).append("' class='chatbot-logo'>")
-                                        .append("</div>");
-                            }
-                        }
-                        case "Heading" -> headerContent.append("<div class='chatbot-heading' style='text-align:")
-                                .append(script.getHeadingAlign()).append(";'>")
-                                .append(escapeHtml(script.getHeading())).append("</div>");
-                        case "TextArea" -> headerContent.append("<div class='chatbot-text' style='text-align:")
-                                .append(script.getTextAlign()).append(";'>")
-                                .append(escapeHtml(script.getTextArea())).append("</div>");
+                    ScriptGenerate script = scriptgeneraterepository.findById(id).orElse(null);
+                    if (script == null) {
+                        return ResponseEntity.ok("alert('Widget not found');");
                     }
-                }
 
-                List<String> firstTriggerOrder = trigger.getFirstTrigger();
-                boolean hasDepartment = !trigger.getDepartments().isEmpty();
-                boolean hasTextArea = trigger.getTextOption() != null;
+                    Trigger trigger = triggerRepository.findByStatusTrue().orElse(null);
+                    if (trigger == null) {
+                        return ResponseEntity.ok("alert('Active trigger not found');");
+                    }
 
-                StringBuilder welcomeMessages = new StringBuilder();
-                for (String item : firstTriggerOrder) {
-                    switch (item) {
-                        case "Text Area" -> {
-                            if (hasTextArea) {
-                                String textMessage = escapeHtml(trigger.getTextOption().getText());
-                                welcomeMessages.append("<div style=\"background-color:")
-                                        .append(buttonColor)
-                                        .append("; color:white; max-width:85%; font-size:14px; padding:10px; border-radius:5px; margin-bottom:5px;\">")
-                                        .append(textMessage)
-                                        .append("</div>");
+                    String buttonColor = script.getButtonColor() != null ? script.getButtonColor() : "#007bff";
+
+                    StringBuilder headerContent = new StringBuilder();
+                    for (String item : script.getAppearence()) {
+                        switch (item) {
+                            case "Logo" -> {
+                                if (script.getLogo() != null) {
+                                    String base64Img = Base64.getEncoder().encodeToString(script.getLogo());
+                                    headerContent.append("<div style='text-align:")
+                                            .append(script.getLogoAlign()).append(";'>")
+                                            .append("<img src='data:image/png;base64,")
+                                            .append(base64Img).append("' class='chatbot-logo'></div>");
+                                }
                             }
+                            case "Heading" -> headerContent.append("<div class='chatbot-heading' style='text-align:")
+                                    .append(script.getHeadingAlign()).append(";'>")
+                                    .append(escapeHtml(script.getHeading())).append("</div>");
+                            case "TextArea" -> headerContent.append("<div class='chatbot-text' style='text-align:")
+                                    .append(script.getTextAlign()).append(";'>")
+                                    .append(escapeHtml(script.getTextArea())).append("</div>");
                         }
-                        case "Department" -> {
-                            if (hasDepartment) {
-                                welcomeMessages.append("<p style='font-weight:bold; margin-bottom:1px;'>Set your categories</p>");
-                                for (SetDepartment dept : trigger.getDepartments()) {
-                                    welcomeMessages.append("<p class='chatbot-department' data-dept-id='")
-                                            .append(dept.getDepId())
-                                            .append("' style=\"background-color:")
-                                            .append(buttonColor)
-                                            .append("; color:white; padding:10px; max-width:85%; font-size:14px; border-radius:5px; margin-bottom:3px; display:block; cursor:pointer;\">")
-                                            .append(escapeHtml(dept.getName()))
-                                            .append("</p>");
+                    }
+
+                    StringBuilder welcomeMessages = new StringBuilder();
+                    for (String item : trigger.getFirstTrigger()) {
+                        switch (item) {
+                            case "Text Area" -> {
+                                if (trigger.getTextOption() != null) {
+                                    String textMessage = escapeHtml(trigger.getTextOption().getText());
+                                    welcomeMessages.append("<div style=\"background-color:")
+                                            .append(buttonColor).append("; color:white; max-width:85%; font-size:14px; padding:10px; border-radius:5px; margin-bottom:5px;\">")
+                                            .append(textMessage).append("</div>");
+                                }
+                            }
+                            case "Department" -> {
+                                if (!trigger.getDepartments().isEmpty()) {
+                                    welcomeMessages.append("<p style='font-weight:bold;'>Set your categories</p>");
+                                    for (SetDepartment dept : trigger.getDepartments()) {
+                                        welcomeMessages.append("<p class='chatbot-department' data-dept-id='")
+                                                .append(dept.getDepId()).append("' style=\"background-color:")
+                                                .append(buttonColor).append("; color:white; padding:10px; max-width:85%; font-size:14px; border-radius:5px; margin-bottom:3px; display:block; cursor:pointer;\">")
+                                                .append(escapeHtml(dept.getName())).append("</p>");
+                                    }
                                 }
                             }
                         }
                     }
+
+                    String baseUrl = "http://localhost:8080";
+
+                         String chatPanelJs = String.format("""
+(function() {
+    function loadScript(src, callback) {
+        var s = document.createElement('script');
+        s.src = src;
+        s.onload = callback;
+        document.head.appendChild(s);
+    }
+
+    loadScript("https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js", function () {
+        loadScript("https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js", function () {
+            const senderIdStr = '%s';
+            let stompClient = null;
+            let selectedAdmin = null;
+            let sessionId = null;
+
+            const panel = document.getElementById('chatbot-panel');
+            panel.innerHTML = `
+                <div class="chatbot-header" style="background-color: %s; color: white; padding: 10px;">
+                    %s
+                </div>
+                <div id="chatbot-messages" style="height:250px;overflow-y:auto;padding:10px;background:#f8f8f8;"></div>
+                <div class="chatbot-input-container" style="padding:10px;">
+                    <input type="text" id="chatbot-user-input" placeholder="Type your message..." />
+                    <button id="chatbot-send-button">Send</button>
+                </div>
+            `;
+
+            const messagesEl = document.getElementById('chatbot-messages');
+            messagesEl.innerHTML = `%s`;
+
+            document.addEventListener('click', e => {
+                if (e.target.matches('.chatbot-department')) {
+                    const deptId = e.target.dataset.deptId;
+                    appendMessage('Connecting to department...', 'BOT');
+                    fetch('%s/chatbot/getdep/' + deptId)
+                        .then(r => r.json())
+                        .then(dep => {
+                            if (dep.admins.length) {
+                                selectedAdmin = dep.admins[0];
+                                appendMessage('Chatting with ' + selectedAdmin.username, 'BOT');
+
+                                fetch('%s/start', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/x-www-form-urlencoded'
+                                    },
+                                    body: new URLSearchParams({
+                                        sender: senderIdStr,
+                                        receiver: selectedAdmin.email
+                                    })
+                                })
+                                .then(r => r.json())
+                                .then(data => {
+                                    sessionId = data.sessionId;
+                                    connectWebSocket(sessionId);
+                                });
+                            } else {
+                                appendMessage('No admin available.', 'BOT');
+                            }
+                        })
+                        .catch(() => appendMessage('Error fetching department.', 'BOT'));
+                }
+            });
+
+            const input = document.getElementById('chatbot-user-input');
+            const btn = document.getElementById('chatbot-send-button');
+            btn.onclick = send;
+            input.onkeydown = e => e.key === 'Enter' ? send() : null;
+
+            function send() {
+                const text = input.value.trim();
+                if (!text || !sessionId || !stompClient || !selectedAdmin) {
+                    appendMessage("Please complete session setup.", "BOT");
+                    return;
                 }
 
-                String baseUrl = "http://localhost:8080";
+               <!-- appendMessage(text, 'USER'); -->
 
-                String chatPanelJs = String.format("""
-                	    (function() {
-                	        const panel = document.getElementById('chatbot-panel');
-                	        panel.innerHTML = `
-                	            <div class="chatbot-header" style="background-color: %s; color: white; padding: 10px;">
-                	                %s
-                	            </div>
-                	            <div id="chatbot-messages" style="height:250px;overflow-y:auto;padding:10px;background:#f8f8f8;"></div>
-                	            <div class="chatbot-input-container" style="padding:10px;">
-                	                <input type="text" id="chatbot-user-input" placeholder="Type your message..." />
-                	                <button id="chatbot-send-button">Send</button>
-                	            </div>
-                	        `;
+                stompClient.send("/app/send", {}, JSON.stringify({
+                    sessionId: sessionId,
+                    sender: senderIdStr,
+                    receiver: selectedAdmin.email,
+                    content: text,
+                    role: 'USER'
+                }));
 
-                	        const messagesEl = document.getElementById('chatbot-messages');
-                	        messagesEl.innerHTML = `%s`;
+                input.value = '';
+            }
 
-                	        let selectedAdmin = null;
-                	        let sessionId = null;
+            function appendMessage(text, role) {
+                const d = document.createElement('div');
+                d.textContent = text;
+                d.className = 'chatbot-message';
+                d.style.marginBottom = '8px';
+                d.style.padding = '8px 12px';
+                d.style.borderRadius = '10px';
+                d.style.maxWidth = '70%%';
+                d.style.display = 'inline-block';
+                d.style.clear = 'both';
 
-                	        document.addEventListener('click', e => {
-                	            if (e.target.matches('.chatbot-department')) {
-                	                const deptId = e.target.dataset.deptId;
-                	                appendMessage('Connecting to department...', 'BOT');
-                	                fetch('%s/chatbot/getdep/' + deptId)
-                	                    .then(r => r.json())
-                	                    .then(dep => {
-                	                        if (dep.admins.length) {
-                	                            selectedAdmin = dep.admins[0];
-                	                            appendMessage('Chatting with ' + selectedAdmin.username, 'BOT');
+                if (role === 'USER') {
+                    d.style.backgroundColor = '#007bff';
+                    d.style.color = 'white';
+                    d.style.textAlign = 'right';
+                    d.style.float = 'right';
+                } else {
+                    d.style.backgroundColor = '#e0e0e0';
+                    d.style.color = 'black';
+                    d.style.textAlign = 'left';
+                    d.style.float = 'left';
+                }
 
-                	                            fetch('%s/chatbot/chatbot/get-session-id?sender=' + '%s' + '&receiver=' + selectedAdmin.id)
-                	                                .then(r => r.json())
-                	                                .then(session => {
-                	                                    sessionId = session.sessionId;
-                	                                    console.log("sessionId", sessionId);
-                	                                    fetchMessages();
-                	                                });
-                	                        } else {
-                	                            appendMessage('No admin available.', 'BOT');
-                	                        }
-                	                    })
-                	                    .catch(() => appendMessage('Error fetching department.', 'BOT'));
-                	            }
-                	        });
+                messagesEl.appendChild(d);
+                const br = document.createElement('div');
+                br.style.clear = 'both';
+                messagesEl.appendChild(br);
+                messagesEl.scrollTop = messagesEl.scrollHeight;
+            }
 
-                	        const input = document.getElementById('chatbot-user-input');
-                	        const btn = document.getElementById('chatbot-send-button');
-                	        btn.onclick = send;
-                	        input.onkeydown = e => e.key === 'Enter' ? send() : null;
+            function connectWebSocket(sessionId) {
+                const socket = new SockJS('%s/chat');
+                stompClient = Stomp.over(socket);
 
-                	        function send() {
-                	            const text = input.value.trim();
-                	            if (!text) return;
-                	            if (!selectedAdmin) {
-                	                appendMessage('Please select a department first.', 'BOT');
-                	                return;
-                	            }
-
-                	            // Append user's message immediately
-                	            appendMessage(text, 'USER');
-
-                	            fetch('%s/chatbot/send', {
-                	                method: 'POST',
-                	                headers: {
-                	                    'Content-Type': 'application/json',
-                	                    'Authorization': '%s'
-                	                },
-                	                body: JSON.stringify({
-                	                    sender: '%s',
-                	                    receiver: selectedAdmin.id,
-                	                    message: text
-                	                })
-                	            }).then(res => {
-                	                if (!res.ok) throw new Error('Message send failed');
-                	                return res.json();
-                	            }).then(response => {
-                	                fetchMessages();
-                	                console.log('Message sent:', response);
-                	            }).catch(err => {
-                	                appendMessage('Failed to send message.', 'BOT');
-                	            });
-
-                	            input.value = '';
-                	        }
-
-                	        function appendMessage(text, role) {
-                	            const d = document.createElement('div');
-                	            d.textContent = text;
-                	            d.className = 'chatbot-message';
-                	            d.style.marginBottom = '8px';
-                	            d.style.padding = '8px 12px';
-                	            d.style.borderRadius = '10px';
-                	            d.style.maxWidth = '70%%';
-                	            d.style.display = 'inline-block';
-
-                	            if (role === 'USER') {
-                	                d.style.backgroundColor = '#007bff';
-                	                d.style.color = 'white';
-                	                d.style.textAlign = 'right';
-                	                d.style.float = 'right';
-                	            } else {
-                	                d.style.backgroundColor = '#e0e0e0';
-                	                d.style.color = 'black';
-                	                d.style.textAlign = 'left';
-                	                d.style.float = 'left';
-                	            }
-
-                	            messagesEl.appendChild(d);
-
-                	            const br = document.createElement('div');
-                	            br.style.clear = 'both';
-                	            messagesEl.appendChild(br);
-
-                	            messagesEl.scrollTop = messagesEl.scrollHeight;
-                	        }
-
-                	        async function fetchMessages() {
-                	            try {
-                	                const sentUrl = `%s/chatbot/${sessionId}/sent/` + selectedAdmin.id;
-                	                const receivedUrl = `%s/chatbot/${sessionId}/` + selectedAdmin.id + `/received`;
-
-                	                const [sentRes, receivedRes] = await Promise.all([
-                	                    fetch(sentUrl, { headers: { "Authorization": "%s" } }),
-                	                    fetch(receivedUrl, { headers: { "Authorization": "%s" } })
-                	                ]);
-
-                	                if (!sentRes.ok || !receivedRes.ok) {
-                	                    appendMessage("Failed to fetch messages.", "BOT");
-                	                    return;
-                	                }
-
-                	                const sentData = await sentRes.json().catch(() => ({ chat: [] }));
-                	                const receivedData = await receivedRes.json().catch(() => ({ chat: [] }));
-
-                	                const sentMessages = sentData?.chat || [];
-                	                const receivedMessages = receivedData?.chat || [];
-
-                	                const allMessages = [...sentMessages, ...receivedMessages];
-                	                allMessages.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
-
-                	                messagesEl.innerHTML = ''; // Clear previous messages
-                	                allMessages.forEach(msg => {
-                	                    appendMessage(msg.message, msg.role);
-                	                });
-
-                	            } catch (err) {
-                	                appendMessage("Error fetching chat history.", "BOT");
-                	            }
-                	        }
-
-                	        // Poll every 3s
-                	        setInterval(() => {
-                	            if (sessionId && selectedAdmin) {
-                	                fetchMessages();
-                	            }
-                	        }, 3000);
-                	        
-                	        
-                	        
-                	        setInterval(() => {
-  fetch("http://localhost:8080/chatbot/ping", {
-    method: "POST",
-    headers: {
-      "Authorization": "Bearer " + %s,
-      "Content-Type": "application/json"
-    }
-    
-  }).catch(err => console.error("Ping failed:", err));
-}, 3000);
-
-console.log("token",%s);
+                stompClient.connect({}, function () {
+                    console.log("Connected to WebSocket");
+                    stompClient.subscribe(`/topic/messages/` + sessionId, function (msg) {
+                        const message = JSON.parse(msg.body);
+                        appendMessage(message.content, message.role);
+                    });
+                });
+            }
+        });
+    });
+})();
+""",
+    escapeJs(senderIdStr),
+    buttonColor,
+    escapeJsForTemplateLiteral(headerContent.toString()),
+    escapeJsForTemplateLiteral(welcomeMessages.toString()),
+    baseUrl, baseUrl, baseUrl
+);
 
 
-                	    })();
-                	    """,
-                	    buttonColor,
-                	    escapeJsForTemplateLiteral(headerContent.toString()),
-                	    escapeJsForTemplateLiteral(welcomeMessages.toString()),
-                	    baseUrl,                                   // getdep
-                	    baseUrl, escapeJs(senderIdStr),            // get-session-id
-                	    baseUrl, escapeJs(jwtToken), escapeJs(senderIdStr), // send
-                	    baseUrl, baseUrl,                          // fetchMessages (sent & received)
-                	    escapeJs(jwtToken), escapeJs(jwtToken),    // Authorization headers
-                	    escapeJs(senderIdStr),
-                	    escapeJs(jwtToken),
-                	    escapeJs(jwtToken)
-                	    
-                	    // sender ID (used in backend comparison if needed)
-                	);
+                    return ResponseEntity.ok(chatPanelJs);
 
-                return ResponseEntity.ok(chatPanelJs);
+                } catch (Exception e) {
+                    return ResponseEntity.ok("alert('Error: " + escapeJs(e.getMessage()) + "');");
+                }
             }
 
             private String escapeJs(String input) {
@@ -800,9 +741,7 @@ console.log("token",%s);
                                                  .replace("\"", "&quot;")
                                                  .replace("'", "&#x27;");
             }
-            
-}
-            
+
             
 //            @PostMapping(value = "/widget/chat/{id}", produces = "application/javascript")
 //            public ResponseEntity<String> handleUserSubmit(
@@ -828,6 +767,8 @@ console.log("token",%s);
 //                String jwtToken = jwtUtil.generateToken(email, user.getId(), role);
 //                user.setToken(jwtToken);
 //                userinforepository.save(user);
+//                
+//                System.out.println("jwtToken" + jwtToken);
 //
 //                ScriptGenerate script = scriptgeneraterepository.findById(id)
 //                        .orElseThrow(() -> new RuntimeException("Widget not found"));
@@ -879,7 +820,7 @@ console.log("token",%s);
 //                                welcomeMessages.append("<p style='font-weight:bold; margin-bottom:1px;'>Set your categories</p>");
 //                                for (SetDepartment dept : trigger.getDepartments()) {
 //                                    welcomeMessages.append("<p class='chatbot-department' data-dept-id='")
-//                                            .append(dept.getId())
+//                                            .append(dept.getDepId())
 //                                            .append("' style=\"background-color:")
 //                                            .append(buttonColor)
 //                                            .append("; color:white; padding:10px; max-width:85%; font-size:14px; border-radius:5px; margin-bottom:3px; display:block; cursor:pointer;\">")
@@ -894,117 +835,195 @@ console.log("token",%s);
 //                String baseUrl = "http://localhost:8080";
 //
 //                String chatPanelJs = String.format("""
-//                    (function() {
-//                        function loadScripts() {
-//                            return Promise.all([
-//                                loadScript('https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js'),
-//                                loadScript('https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js')
-//                            ]);
-//                        }
-//                        function loadScript(url) {
-//                            return new Promise((resolve, reject) => {
-//                                const s = document.createElement('script');
-//                                s.src = url;
-//                                s.onload = resolve;
-//                                s.onerror = () => reject(new Error('Failed to load ' + url));
-//                                document.head.appendChild(s);
-//                            });
-//                        }
+//                	    (function() {
+//                	        const panel = document.getElementById('chatbot-panel');
+//                	        panel.innerHTML = `
+//                	            <div class="chatbot-header" style="background-color: %s; color: white; padding: 10px;">
+//                	                %s
+//                	            </div>
+//                	            <div id="chatbot-messages" style="height:250px;overflow-y:auto;padding:10px;background:#f8f8f8;"></div>
+//                	            <div class="chatbot-input-container" style="padding:10px;">
+//                	                <input type="text" id="chatbot-user-input" placeholder="Type your message..." />
+//                	                <button id="chatbot-send-button">Send</button>
+//                	            </div>
+//                	        `;
 //
-//                        loadScripts().then(initWidget).catch(err => console.error(err));
+//                	        const messagesEl = document.getElementById('chatbot-messages');
+//                	        messagesEl.innerHTML = `%s`;
 //
-//                        function initWidget() {
-//                            const panel = document.getElementById('chatbot-panel');
-//                            panel.innerHTML = `
-//                                <div class="chatbot-header" style="background-color: %s; color: white; padding: 10px;">
-//                                    %s
-//                                </div>
-//                                <div id="chatbot-messages" style="height:250px;overflow-y:auto;padding:10px;background:#f8f8f8;"></div>
-//                                <div class="chatbot-input-container" style="padding:10px;">
-//                                    <input type="text" id="chatbot-user-input" placeholder="Type your message..." />
-//                                    <button id="chatbot-send-button">Send</button>
-//                                </div>
-//                            `;
-//                            const messagesEl = document.getElementById('chatbot-messages');
-//                            messagesEl.innerHTML = `%s`;
+//                	        let selectedAdmin = null;
+//                	        let sessionId = null;
 //
-//                            const socket = new SockJS('%s/ws');
-//                            const stompClient = Stomp.over(socket);
+//                	        document.addEventListener('click', e => {
+//                	            if (e.target.matches('.chatbot-department')) {
+//                	                const deptId = e.target.dataset.deptId;
+//                	                appendMessage('Connecting to department...', 'BOT');
+//                	                fetch('%s/chatbot/getdep/' + deptId)
+//                	                    .then(r => r.json())
+//                	                    .then(dep => {
+//                	                        if (dep.admins.length) {
+//                	                            selectedAdmin = dep.admins[0];
+//                	                            appendMessage('Chatting with ' + selectedAdmin.username, 'BOT');
 //
-//                            let selectedAdmin = null;
+//                	                            fetch('%s/chatbot/chatbot/get-session-id?sender=' + '%s' + '&receiver=' + selectedAdmin.id)
+//                	                                .then(r => r.json())
+//                	                                .then(session => {
+//                	                                    sessionId = session.sessionId;
+//                	                                    console.log("sessionId", sessionId);
+//                	                                    fetchMessages();
+//                	                                });
+//                	                        } else {
+//                	                            appendMessage('No admin available.', 'BOT');
+//                	                        }
+//                	                    })
+//                	                    .catch(() => appendMessage('Error fetching department.', 'BOT'));
+//                	            }
+//                	        });
 //
-//                            stompClient.connect(
-//                                { 'Authorization': '%s' },
-//                                () => stompClient.subscribe('/user/queue/messages', msg => {
-//                                    const m = JSON.parse(msg.body);
-//                                    appendMessage(m.content || m.message, 'bot');
-//                                }),
-//                                err => appendMessage('Connection lost. Refresh to reconnect.', 'bot')
-//                            );
+//                	        const input = document.getElementById('chatbot-user-input');
+//                	        const btn = document.getElementById('chatbot-send-button');
+//                	        btn.onclick = send;
+//                	        input.onkeydown = e => e.key === 'Enter' ? send() : null;
 //
-//                            document.addEventListener('click', e => {
-//                                if (e.target.matches('.chatbot-department')) {
-//                                    const deptId = e.target.dataset.deptId;
-//                                    appendMessage('Connected to department...', 'bot');
-//                                    fetch('%s/chatbot/getdep/' + deptId)
-//                                        .then(r => r.json())
-//                                        .then(dep => {
-//                                            if (dep.admins.length) {
-//                                                selectedAdmin = dep.admins[0];
-//                                                appendMessage('Chatting with ' + selectedAdmin.username, 'bot');
-//                                            } else appendMessage('No admin available.', 'bot');
-//                                        })
-//                                        .catch(() => appendMessage('Error fetching department.', 'bot'));
-//                                }
-//                            });
+//                	        function send() {
+//                	            const text = input.value.trim();
+//                	            if (!text) return;
+//                	            if (!selectedAdmin) {
+//                	                appendMessage('Please select a department first.', 'BOT');
+//                	                return;
+//                	            }
 //
-//                            const input = document.getElementById('chatbot-user-input');
-//                            const btn = document.getElementById('chatbot-send-button');
-//                            btn.onclick = send;
-//                            input.onkeydown = e => e.key === 'Enter' ? send() : null;
+//                	            // Append user's message immediately
+//                	            appendMessage(text, 'USER');
 //
-//                            function send() {
-//                                const text = input.value.trim();
-//                                if (!text) return;
-//                                if (!selectedAdmin) {
-//                                    appendMessage('Please select a department first.', 'bot');
-//                                    return;
-//                                }
-//                                appendMessage(text, 'user');
-//                                const payload = {
-//                                    sender: '%s',
-//                                    receiver: selectedAdmin.id,
-//                                    message: text
-//                                };
-//                                console.log("Sending payload", payload);
-//                               stompClient.send("/app/chat.sendMessage", {}, JSON.stringify({
-//                                   sender: %s,
-//                                   receiver: selectedAdmin.id,
-//                                   message: text
-//                               }));
-//                                input.value = '';
-//                            }
+//                	            fetch('%s/chatbot/send', {
+//                	                method: 'POST',
+//                	                headers: {
+//                	                    'Content-Type': 'application/json',
+//                	                    'Authorization': '%s'
+//                	                },
+//                	                body: JSON.stringify({
+//                	                    sender: '%s',
+//                	                    receiver: selectedAdmin.id,
+//                	                    message: text
+//                	                })
+//                	            }).then(res => {
+//                	                if (!res.ok) throw new Error('Message send failed');
+//                	                return res.json();
+//                	            }).then(response => {
+//                	                fetchMessages();
+//                	                console.log('Message sent:', response);
+//                	            }).catch(err => {
+//                	                appendMessage('Failed to send message.', 'BOT');
+//                	            });
 //
-//                            function appendMessage(text, sender) {
-//                                const d = document.createElement('div');
-//                                d.textContent = text;
-//                                d.className = 'chatbot-message ' + (sender === 'user' ? 'user-message' : 'bot-message');
-//                                d.style.marginBottom = '5px';
-//                                messagesEl.appendChild(d);
-//                                messagesEl.scrollTop = messagesEl.scrollHeight;
-//                            }
-//                        }
-//                    })();
-//                    """,
-//                    buttonColor,
-//                    escapeJsForTemplateLiteral(headerContent.toString()),
-//                    escapeJsForTemplateLiteral(welcomeMessages.toString()),
-//                    baseUrl,
-//                    escapeJs(jwtToken),
-//                    baseUrl,
-//                    escapeJs(senderIdStr),
-//                    escapeJs(senderIdStr)
-//                );
+//                	            input.value = '';
+//                	        }
+//
+//                	        function appendMessage(text, role) {
+//                	            const d = document.createElement('div');
+//                	            d.textContent = text;
+//                	            d.className = 'chatbot-message';
+//                	            d.style.marginBottom = '8px';
+//                	            d.style.padding = '8px 12px';
+//                	            d.style.borderRadius = '10px';
+//                	            d.style.maxWidth = '70%%';
+//                	            d.style.display = 'inline-block';
+//
+//                	            if (role === 'USER') {
+//                	                d.style.backgroundColor = '#007bff';
+//                	                d.style.color = 'white';
+//                	                d.style.textAlign = 'right';
+//                	                d.style.float = 'right';
+//                	            } else {
+//                	                d.style.backgroundColor = '#e0e0e0';
+//                	                d.style.color = 'black';
+//                	                d.style.textAlign = 'left';
+//                	                d.style.float = 'left';
+//                	            }
+//
+//                	            messagesEl.appendChild(d);
+//
+//                	            const br = document.createElement('div');
+//                	            br.style.clear = 'both';
+//                	            messagesEl.appendChild(br);
+//
+//                	            messagesEl.scrollTop = messagesEl.scrollHeight;
+//                	        }
+//
+//                	        async function fetchMessages() {
+//                	            try {
+//                	                const sentUrl = `%s/chatbot/${sessionId}/sent/` + selectedAdmin.id;
+//                	                const receivedUrl = `%s/chatbot/${sessionId}/` + selectedAdmin.id + `/received`;
+//
+//                	                const [sentRes, receivedRes] = await Promise.all([
+//                	                    fetch(sentUrl, { headers: { "Authorization": "%s" } }),
+//                	                    fetch(receivedUrl, { headers: { "Authorization": "%s" } })
+//                	                ]);
+//
+//                	                if (!sentRes.ok || !receivedRes.ok) {
+//                	                    appendMessage("Failed to fetch messages.", "BOT");
+//                	                    return;
+//                	                }
+//
+//                	                const sentData = await sentRes.json().catch(() => ({ chat: [] }));
+//                	                const receivedData = await receivedRes.json().catch(() => ({ chat: [] }));
+//
+//                	                const sentMessages = sentData?.chat || [];
+//                	                const receivedMessages = receivedData?.chat || [];
+//
+//                	                const allMessages = [...sentMessages, ...receivedMessages];
+//                	                allMessages.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+//
+//                	                messagesEl.innerHTML = ''; // Clear previous messages
+//                	                allMessages.forEach(msg => {
+//                	                    appendMessage(msg.message, msg.role);
+//                	                });
+//
+//                	            } catch (err) {
+//                	                appendMessage("Error fetching chat history.", "BOT");
+//                	            }
+//                	        }
+//
+//                	        // Poll every 3s
+//                	        setInterval(() => {
+//                	            if (sessionId && selectedAdmin) {
+//                	                fetchMessages();
+//                	            }
+//                	        }, 3000);
+//                	        
+//                	        
+//                	        
+//                	        setInterval(() => {
+//  fetch("http://localhost:8080/chatbot/ping", {
+//    method: "POST",
+//    headers: {
+//      "Authorization": "Bearer " + %s,
+//      "Content-Type": "application/json"
+//    }
+//    
+//  }).catch(err => console.error("Ping failed:", err));
+//}, 3000);
+//
+//console.log("token",%s);
+//
+//
+//                	    })();
+//                	    """,
+//                	    buttonColor,
+//                	    escapeJsForTemplateLiteral(headerContent.toString()),
+//                	    escapeJsForTemplateLiteral(welcomeMessages.toString()),
+//                	    baseUrl,                                   // getdep
+//                	    baseUrl, escapeJs(senderIdStr),            // get-session-id
+//                	    baseUrl, escapeJs(jwtToken), escapeJs(senderIdStr), // send
+//                	    baseUrl, baseUrl,                          // fetchMessages (sent & received)
+//                	    escapeJs(jwtToken), escapeJs(jwtToken),    // Authorization headers
+//                	    escapeJs(senderIdStr),
+//                	    escapeJs(jwtToken),
+//                	    escapeJs(jwtToken)
+//                	    
+//                	    // sender ID (used in backend comparison if needed)
+//                	);
 //
 //                return ResponseEntity.ok(chatPanelJs);
 //            }
@@ -1029,136 +1048,7 @@ console.log("token",%s);
 //                                                 .replace("\"", "&quot;")
 //                                                 .replace("'", "&#x27;");
 //            }
-
-
-
-
-//String chatPanelJs = String.format("""
-//(function() {
-//  function loadScript(url) {
-//      return new Promise((resolve, reject) => {
-//          const script = document.createElement('script');
-//          script.src = url;
-//          script.onload = () => resolve();
-//          script.onerror = () => reject(new Error('Failed to load ' + url));
-//          document.head.appendChild(script);
-//      });
-//  }
-//
-//  Promise.all([
-//      loadScript('https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js'),
-//      loadScript('https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js')
-//  ]).then(() => {
-//      var panel = document.getElementById('chatbot-panel');
-//      panel.innerHTML = `
-//          <div class="chatbot-header" style="background-color: %s; color: white; padding: 10px;">
-//              %s
-//          </div>
-//          <div id="chatbot-messages" style="height:250px;overflow-y:auto;padding:10px;background:#f8f8f8;"></div>
-//          <div class="chatbot-input-container" style="padding:10px;">
-//              <input type="text" id="chatbot-user-input" placeholder="Type your message..." />
-//              <button id="chatbot-send-button">Send</button>
-//          </div>
-//      `;
-//
-//      var messagesEl = document.getElementById('chatbot-messages');
-//
-//      function addMessage(content, sender) {
-//          var msgDiv = document.createElement('div');
-//          msgDiv.textContent = content;
-//          msgDiv.className = 'chatbot-message ' + (sender === 'bot' ? 'bot-message' : 'user-message');
-//          msgDiv.style.marginBottom = '5px';
-//          messagesEl.appendChild(msgDiv);
-//          messagesEl.scrollTop = messagesEl.scrollHeight;
-//      }
-//
-//      messagesEl.innerHTML = `%s`;
-//
-//      var socket = new SockJS('%s/ws');
-//      var stompClient = Stomp.over(socket);
-//
-//      var userId = '%s';
-//      var token = '%s';
-//      var selectedAdmin = null;
-//
-//      stompClient.connect(
-//          { Authorization: token },
-//          function (frame) {
-//              stompClient.subscribe("/user/queue/messages", function (messageOutput) {
-//                  const msg = JSON.parse(messageOutput.body);
-//                  addMessage(msg.message, 'bot');
-//              });
-//          },
-//          function (error) {
-//              addMessage('Connection lost. Please refresh the page.', 'bot');
-//          }
-//      );
-//
-//      document.addEventListener('click', function(event) {
-//          if (event.target.classList.contains('chatbot-department')) {
-//              const deptId = event.target.getAttribute('data-dept-id');
-//              const deptName = event.target.innerText;
-//
-//              addMessage('You selected department: ' + deptName, 'bot');
-//
-//              fetch('%s/chatbot/getdep/' + deptId)
-//                  .then(res => res.json())
-//                  .then(depData => {
-//                      if (depData.admins && depData.admins.length > 0) {
-//                          selectedAdmin = depData.admins[0];
-//                          addMessage('You are now connected to admin: ' + selectedAdmin.username + ' (' + selectedAdmin.email + ')', 'bot');
-//                      } else {
-//                          addMessage('No admin available for this department.', 'bot');
-//                          selectedAdmin = null;
-//                      }
-//                  })
-//                  .catch(err => {
-//                      console.error('Error fetching department info', err);
-//                      addMessage('Failed to get department details.', 'bot');
-//                      selectedAdmin = null;
-//                  });
-//          }
-//      });
-//
-//      var input = document.getElementById('chatbot-user-input');
-//      var sendButton = document.getElementById('chatbot-send-button');
-//
-//      sendButton.addEventListener('click', function() {
-//          var msg = input.value.trim();
-//          if (!msg) return;
-//
-//          if (!selectedAdmin) {
-//              addMessage('Please select a department first.', 'bot');
-//              return;
-//          }
-//
-//          addMessage(msg, 'user');
-//          stompClient.send('/app/chat.sendMessage', {}, JSON.stringify({
-//              senderId: userId,
-//              recipientId: selectedAdmin.id,
-//              content: msg,
-//              role: token
-//          }));
-//          input.value = '';
-//      });
-//
-//      input.addEventListener('keydown', function(e) {
-//          if (e.key === 'Enter') sendButton.click();
-//      });
-//
-//  }).catch(err => {
-//      console.error('Error loading websocket libraries', err);
-//  });
-//})();
-//""",
-//buttonColor,
-//escapeJsForTemplateLiteral(headerContent.toString()),
-//escapeJsForTemplateLiteral(welcomeMessages.toString()),
-//baseUrl,
-//escapeJs(senderIdStr),
-//escapeJs(role),
-//baseUrl
-//);
-        
-
-
+            
+}
+            
+            

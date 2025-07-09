@@ -11,31 +11,13 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ChatSessionRepository extends JpaRepository<ChatSession,Long>{
 	
-    Optional<ChatSession> findBySenderidAndReceiverid(Long senderId, Long receiverId);
-    
-    @Query("SELECT s FROM ChatSession s WHERE ((s.senderid = :senderId AND s.receiverid = :receiverId) OR (s.senderid = :receiverId AND s.receiverid = :senderId)) AND s.status = true")
-    Optional<ChatSession> findActiveSessionBetweenUsers(@Param("senderId") Long senderId, @Param("receiverId") Long receiverId);
-    
-    @Query("SELECT s FROM ChatSession s WHERE " +
-            "((s.senderid = :senderId AND s.receiverid = :receiverId) OR " +
-            "(s.senderid = :receiverId AND s.receiverid = :senderId)) " +
-            "ORDER BY s.sessionid DESC")
-     Optional<ChatSession> findLatestSessionBetweenUsers(@Param("senderId") Long senderId,
-                                                         @Param("receiverId") Long receiverId);
-    
-    List<ChatSession> findByUserIdAndStatusTrue(Long userId);
-
-    boolean existsByUserIdAndStatusTrue(Long userId);
-    
-//    @Query("SELECT s FROM ChatSession s WHERE " +
-//            "((s.senderid = :senderId AND s.receiverid = :receiverId) OR " +
-//            "(s.senderid = :receiverId AND s.receiverid = :senderId)) " +
-//            "ORDER BY s.sessionid DESC")
-//     Optional<ChatSession> findLatestSessionBetweenUsers(@Param("senderId") Long senderId,
-//                                                         @Param("receiverId") Long receiverId);
-//
-//     List<ChatSession> findByUserIdAndStatusTrue(Long userId);
-//
-//     boolean existsByUserIdAndStatusTrue(Long userId);
+	 Optional<ChatSession> findBySessionId(String sessionId);
+	 
+	 Optional<ChatSession> findBySenderAndReceiver(String sender, String receiver);
+	 
+	 @Query("SELECT s FROM ChatSession s WHERE s.sender = :sender AND s.receiver = :receiver ORDER BY s.createdTime DESC")
+	 Optional<ChatSession> findLatestSession(@Param("sender") String sender, @Param("receiver") String receiver);
+	 
+	 List<ChatSession> findByReceiver(String receiver);
 
 }
