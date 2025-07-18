@@ -293,6 +293,7 @@ import {
   CFormInput,
 } from "@coreui/react";
 import { useNavigate } from "react-router-dom";
+import API_URL from '../../../Config';
 
 
 const WidgetForm = () => {
@@ -311,7 +312,7 @@ const WidgetForm = () => {
    
 
    useEffect(() => {
-       fetch('http://localhost:8080/chatbot/GetAppearance')
+       fetch(`${API_URL}/chatbot/GetAppearance`)
          .then(res => {
            if (!res.ok) {
              throw new Error('Network response was not ok');
@@ -364,7 +365,7 @@ const WidgetForm = () => {
     formData.append("websiteURL", websiteUrl);
     formData.append("buttonColor", widgetColor);
 
-    const response = await fetch("http://localhost:8080/chatbot/property/generate", {
+    const response = await fetch(`${API_URL}/chatbot/property/generate`, {
       method: "POST",
       headers: {
         Authorization: token,
@@ -413,7 +414,7 @@ console.log(scriptText);
     formData.append("buttonColor", widgetColor);
     formData.append("widgetScript",scriptText);
 
-    const response = await fetch("http://localhost:8080/chatbot/property/save", {
+    const response = await fetch(`${API_URL}/chatbot/property/save`, {
       method: "POST",
       headers: {
         Authorization: token,

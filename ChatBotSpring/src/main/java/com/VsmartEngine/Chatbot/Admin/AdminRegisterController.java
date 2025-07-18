@@ -11,6 +11,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -37,6 +38,9 @@ import jakarta.transaction.Transactional;
 @RequestMapping("/chatbot")
 @Controller
 public class AdminRegisterController {
+	
+	@Value("${UserOrigin}")
+    private String frontendOrigin;
 	
 	@Autowired
 	private AdminRegisterRepository adminregisterrepository;
@@ -373,7 +377,7 @@ public class AdminRegisterController {
 	            adminregister.setStatus(false);
 	            adminregister.setCode(UUID.randomUUID().toString());
 
-	            String link = "http://localhost:3000/#/register?token=" + adminregister.getCode();
+	            String link = frontendOrigin + "/#/register?token=" + adminregister.getCode();
 	            String subject = "You have been invited to join";
 	            String body = "Hi,\n\nYou have been invited to join. Click the link below to register:\n\n" +
 	                          link + "\n\n-chatbot Team";
@@ -389,6 +393,7 @@ public class AdminRegisterController {
 	                .body("{\"message\": \"Error while updating department\"}");
 	    }
 	}
+	
 	
 	@GetMapping("/check-admin-exists")
 	public ResponseEntity<Boolean> checkIfAdminExists() {

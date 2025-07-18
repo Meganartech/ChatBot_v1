@@ -20,7 +20,7 @@ import com.VsmartEngine.Chatbot.Admin.AdminRegisterRepository;
 import com.VsmartEngine.Chatbot.UserInfo.UserInfo;
 import com.VsmartEngine.Chatbot.UserInfo.UserInfoRepository;
 
-@CrossOrigin("http://127.0.0.1:5500")
+@CrossOrigin()
 @Controller
 public class ChatSessionController {
 	
@@ -47,6 +47,7 @@ public class ChatSessionController {
                 session.setReceiver(receiver);
                 session.setSender(sender);
                 session.setSessionId(UUID.randomUUID().toString());
+                session.setStatus(false);
                 chatsessionrepository.save(session);
 
 
@@ -69,6 +70,7 @@ public class ChatSessionController {
 
             MessageDisplay display = new MessageDisplay();
             display.setSessionId(session.getSessionId());
+            display.setStatus(session.isStatus());
 
             userinforepository.findByEmail(session.getSender()).ifPresent(user -> {
                 display.setUserid(user.getId());
@@ -126,6 +128,30 @@ public class ChatSessionController {
 
         return ResponseEntity.ok(displayList);
     }
+    
+    
+    @PostMapping("/setStatusForSessionID")
+    public ResponseEntity<?> setStatus(@RequestParam("sessionId") String sessionId,
+                                       @RequestParam("Status") boolean Status) {
+        try {
+        	System.out.println("Received sessionId: " + sessionId); 
+            Optional<ChatSession> chatsession = chatsessionrepository.findBySessionId(sessionId);
+            if (chatsession.isPresent()) {
+                ChatSession session = chatsession.get();
+                session.setStatus(Status); // ✅ pass boolean, not String
+                chatsessionrepository.save(session);
+                return ResponseEntity.ok("Status updated successfully.");
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Session ID not found.");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                 .body("An error occurred: " + e.getMessage());
+        }
+    }
+
+    
+    
 
 
 }

@@ -2,6 +2,7 @@ import React, {useState , useEffect} from 'react';
 import { CCardHeader, CCardBody, CTable, CTableHead, CTableRow, CTableHeaderCell, CTableBody, CTableDataCell, CButton, CRow, CCol, CInputGroup, CInputGroupText, CFormInput } from '@coreui/react';
 import { FaSearch,FaTrash } from 'react-icons/fa';
 import axios from 'axios';
+import API_URL from '../../Config';
 
 const GridTable = ({currentAdminEmail}) => {
 
@@ -9,7 +10,7 @@ const GridTable = ({currentAdminEmail}) => {
 
     const fetchChatSession = async () => {
         try {
-          const res = await fetch(`http://localhost:8080/sessionlist?receiverEmail=${currentAdminEmail}`)
+          const res = await fetch(`${API_URL}/sessionlist?receiverEmail=${currentAdminEmail}`)
           if (!res.ok) throw new Error('Failed to fetch chat rooms')
           const data = await res.json()
           setSessiondetails(data)
@@ -49,7 +50,7 @@ const GridTable = ({currentAdminEmail}) => {
         
               {/* Add Member Button */}
               <CCol xs="12" sm="2" className="text-sm-end">
-                <CButton  style={{color:'white',color:'black'}}>
+                <CButton  style={{color:'black'}}>
                     <FaTrash/>
                 </CButton>
              </CCol>

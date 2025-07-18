@@ -3,6 +3,7 @@ import axios from 'axios';
 import MembersList from './MemberList';
 import AddMember from './AddMember';
 import { useLocation } from 'react-router-dom';
+import API_URL from '../../../Config';
 
 const Members = () => {
   const [isOpenAddMember, setIsOpenAddMember] = useState(false);
@@ -34,7 +35,7 @@ console.log('admin',editId)
 
   const fetchAdmins = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/chatbot/getAllAdmin');
+      const response = await axios.get(`${API_URL}/chatbot/getAllAdmin`);
       setAdmins(response.data);
     } catch (error) {
       console.error('Error fetching admins:', error);

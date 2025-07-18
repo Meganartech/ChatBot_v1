@@ -19,6 +19,7 @@ import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { FaEye, FaEyeSlash } from 'react-icons/fa'
 import axios from "axios";
+import API_URL from '../../../Config';
 
 const Login = () => {
   const [email, setEmail] = useState('')
@@ -33,7 +34,7 @@ const Login = () => {
     }
   
     try {
-      const response = await axios.post('http://localhost:8080/chatbot/login', {
+      const response = await axios.post(`${API_URL}/chatbot/login`, {
         email,
         password,
       })

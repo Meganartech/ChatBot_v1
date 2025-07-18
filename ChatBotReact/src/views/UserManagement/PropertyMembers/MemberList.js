@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { CCardHeader, CCardBody, CTable, CTableHead, CTableRow, CTableHeaderCell, CTableBody, CTableDataCell, CButton, CRow, CCol, CInputGroup, CInputGroupText, CFormInput } from '@coreui/react';
 import { FaSearch, FaPlus, FaEdit, FaTrash } from 'react-icons/fa';
 import axios from 'axios';
+import API_URL from '../../../Config';
 
 const MemberList = ({ admins, token, onAddMemberClick, refreshAdmins,Edit }) => {
     const [selectedAdmins, setSelectedAdmins] = useState([]);
@@ -29,7 +30,7 @@ const MemberList = ({ admins, token, onAddMemberClick, refreshAdmins,Edit }) => 
             
               const handleDelete = async (adminId) => {
                 try{
-                  const response = await axios.delete(`http://localhost:8080/chatbot/delete/${adminId}`,{
+                  const response = await axios.delete(`${API_URL}/chatbot/delete/${adminId}`,{
                     headers:{
                       Authorization: token,
                     }

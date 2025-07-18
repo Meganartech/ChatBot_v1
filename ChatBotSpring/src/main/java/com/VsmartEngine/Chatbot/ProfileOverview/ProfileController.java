@@ -3,15 +3,16 @@ package com.VsmartEngine.Chatbot.ProfileOverview;
 import lombok.Data;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
 @Data
-@RestController
+@Controller
 @RequestMapping("/api/profiles")
-@CrossOrigin(origins = "*")
+@CrossOrigin()
 public class ProfileController {
     private final ProfileRepository repository;
 

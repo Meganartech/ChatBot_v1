@@ -171,6 +171,7 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
+import API_URL from "../../../Config";
 
 const Register = () => {
   const [name, setName] = useState("");
@@ -190,7 +191,7 @@ const Register = () => {
 
     if (token) {
       axios
-        .get(`http://localhost:8080/chatbot/register-token/${token}`)
+        .get(`${API_URL}/chatbot/register-token/${token}`)
         .then((res) => {
           setEmail(res.data.email);
           setRole(res.data.role);
@@ -225,7 +226,7 @@ const Register = () => {
       formData.append("role", role); // include role if required by backend
 
       const response = await axios.post(
-        "http://localhost:8080/chatbot/register",
+        `${API_URL}/chatbot/register`,
         formData,
         {
           headers: {

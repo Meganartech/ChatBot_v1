@@ -14,11 +14,10 @@ public class ChatSession {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-	
 	private String sessionId;
-
     private String sender;   // user email or ID
     private String receiver; // admin email or ID
+    private boolean Status;
 
     private LocalDateTime createdTime;
 
@@ -27,15 +26,17 @@ public class ChatSession {
 		// TODO Auto-generated constructor stub
 	}
 
-	public ChatSession(Long id, String sessionId, String sender, String receiver, LocalDateTime createdTime) {
+	public ChatSession(Long id, String sessionId, String sender, String receiver, boolean status,
+			LocalDateTime createdTime) {
 		super();
 		this.id = id;
 		this.sessionId = sessionId;
 		this.sender = sender;
 		this.receiver = receiver;
+		Status = status;
 		this.createdTime = createdTime;
 	}
-
+	
 	public ChatSession(String sender, String receiver) {
 		super();
 		this.sender = sender;
@@ -69,7 +70,6 @@ public class ChatSession {
 	public String getReceiver() {
 		return receiver;
 	}
-
 	public void setReceiver(String receiver) {
 		this.receiver = receiver;
 	}
@@ -80,6 +80,13 @@ public class ChatSession {
 
 	public void setCreatedTime(LocalDateTime createdTime) {
 		this.createdTime = createdTime;
+	}
+
+	public boolean isStatus() {
+		return Status;
+	}
+	public void setStatus(boolean status) {
+		Status = status;
 	}
 	
 }

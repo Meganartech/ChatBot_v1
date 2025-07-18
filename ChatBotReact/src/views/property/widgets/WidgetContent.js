@@ -581,6 +581,7 @@ import {
 import { CSS } from '@dnd-kit/utilities'
 import { GripVertical } from 'lucide-react'
 import { cilPlus, cilPencil } from '@coreui/icons';
+import API_URL from "../../../Config";
 
 
 const DraggableItem = ({ id, children }) => {
@@ -644,7 +645,7 @@ const WidgetContent = () => {
   console.log("language",language);
 
   useEffect(() => {
-  fetch('http://localhost:8080/chatbot/GetAppearance')
+  fetch(`${API_URL}/chatbot/GetAppearance`)
     .then(res => {
       if (!res.ok) {
         throw new Error('Network response was not ok');
@@ -760,7 +761,7 @@ const WidgetContent = () => {
   try {
     let response;
     if (isEditId) {
-      response = await fetch(`http://localhost:8080/chatbot/widget/appearance/${isEditId}`, {
+      response = await fetch(`${API_URL}/chatbot/widget/appearance/${isEditId}`, {
         method: 'PATCH',
         headers: {
           Authorization: token, // ✅ Fixed typo
@@ -768,7 +769,7 @@ const WidgetContent = () => {
         body: formData,
       });
     } else {
-      response = await fetch("http://localhost:8080/chatbot/widget/appearance", {
+      response = await fetch(`${API_URL}/chatbot/widget/appearance`, {
         method: "POST",
         headers: {
           Authorization: token, // ✅ Fixed typo
