@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
@@ -25,7 +26,7 @@ import com.VsmartEngine.Chatbot.UserInfo.UserInfoRepository;
 
 import jakarta.transaction.Transactional;
 
-@CrossOrigin
+@CrossOrigin()
 @RequestMapping("/chatbot")
 @RestController
 public class ScriptGenerateController {
@@ -41,6 +42,9 @@ public class ScriptGenerateController {
     
     @Autowired
     private TriggerRepository triggerRepository;
+    
+    @Value("${BackendUrl}")
+	private String backendurl;
     
 //    @Autowired
 //    private AdminService adminService;
@@ -271,9 +275,14 @@ public class ScriptGenerateController {
             }
         }
 
+//        private String generateWidgetScript(UUID id) {
+//            return "<script async defer src= backendurl +'/chatbot/widget/" + id + "'></script>";
+//        } 
+        
         private String generateWidgetScript(UUID id) {
-            return "<script async defer src='http://localhost:8080/chatbot/widget/" + id + "'></script>";
-        }  
+            return "<script async defer src='" + backendurl + "/chatbot/widget/" + id + "'></script>";
+        }
+
         
         
             @GetMapping(value = "/widget/{id}", produces = "application/javascript")
@@ -471,7 +480,7 @@ public class ScriptGenerateController {
                                 var params = new URLSearchParams();
                                 params.append('username', username);
                                 params.append('email', email);
-                                fetch('http://localhost:8080/chatbot/widget/chat/%s', {
+                                fetch('%s/chatbot/widget/chat/%s', {
                                     method: 'POST',
                                     headers: {
                                         'Content-Type': 'application/x-www-form-urlencoded'
@@ -489,7 +498,7 @@ public class ScriptGenerateController {
                             });
                         }
                     })();
-                    """.formatted(escapedHtml, id.toString());
+                    """.formatted(escapedHtml, backendurl,id.toString());
 
                 return ResponseEntity.ok(js);
             }
@@ -710,7 +719,7 @@ public class ScriptGenerateController {
     buttonColor,
     escapeJsForTemplateLiteral(headerContent.toString()),
     escapeJsForTemplateLiteral(welcomeMessages.toString()),
-    baseUrl, baseUrl, baseUrl
+    backendurl, backendurl, backendurl
 );
 
 

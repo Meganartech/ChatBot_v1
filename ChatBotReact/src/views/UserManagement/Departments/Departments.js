@@ -3,6 +3,7 @@ import axios from 'axios';
 import DepartmentList from './DepartmentList';
 import AddDepartment from './AddDepartment';
 import { useLocation } from 'react-router-dom';
+import API_URL from '../../../Config';
 
 const Departments = () => {
   const [isOpenAddDep, setIsOpenAddDep] = useState(false);
@@ -27,7 +28,7 @@ const Departments = () => {
 
   const fetchDepartments = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/chatbot/getAllDepartment');
+      const response = await axios.get(`${API_URL}/chatbot/getAllDepartment`);
       setDepartments(response.data);
     } catch (error) {
       console.error('Error fetching departments:', error);
@@ -39,7 +40,7 @@ const Departments = () => {
 
   const fetchMembers = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/chatbot/getadminnames');
+      const response = await axios.get(`${API_URL}/chatbot/getadminnames`);
       setUsers(response.data);
     } catch (error) {
       console.error('Error fetching members:', error);

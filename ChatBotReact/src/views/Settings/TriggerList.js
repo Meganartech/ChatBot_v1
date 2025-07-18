@@ -16,6 +16,7 @@ import {
 } from '@coreui/react'
 import { FaSearch, FaPlus } from 'react-icons/fa'
 import { FaEdit, FaTrash } from 'react-icons/fa'; // Import the icons
+import API_URL from "../../Config";
 
 
 const TriggerList = ({token,GetTrigger,onAddTriggerClick,refreshTrigger,Edit}) => {
@@ -51,7 +52,7 @@ const TriggerList = ({token,GetTrigger,onAddTriggerClick,refreshTrigger,Edit}) =
     formData.append("status", newStatus);
 
     const response = await axios.post(
-      "http://localhost:8080/chatbot/UpdateTriggerStatus",
+      `${API_URL}/chatbot/UpdateTriggerStatus`,
       formData,
       {
         headers: {
@@ -75,7 +76,7 @@ const TriggerList = ({token,GetTrigger,onAddTriggerClick,refreshTrigger,Edit}) =
 
   const handleDelete = async (triggerId) => {
     try{
-      const response = await axios.delete(`http://localhost:8080/chatbot/deleteTrigger/${triggerId}`,{
+      const response = await axios.delete(`${API_URL}/chatbot/deleteTrigger/${triggerId}`,{
         headers:{
           Authorization: token,
         }

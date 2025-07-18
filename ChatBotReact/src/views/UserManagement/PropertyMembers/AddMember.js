@@ -2,6 +2,7 @@ import React, { useState,useEffect } from 'react';
 import { CCardHeader, CCardBody, CTable, CTableHead, CTableRow, CTableHeaderCell, CTableBody, CTableDataCell, CButton, CRow, CCol, CInputGroup, CInputGroupText, CFormInput } from '@coreui/react';
 import {FaPlus,FaTrash } from 'react-icons/fa';
 import axios from 'axios';
+import API_URL from '../../../Config';
 
 
 const AddMember = ({rows, setRows, token,onCancel,editUserId}) => {
@@ -21,7 +22,7 @@ const AddMember = ({rows, setRows, token,onCancel,editUserId}) => {
   
   const fetchAdmin = async (editUserId) => {
     try {
-      const response = await axios.get(`http://localhost:8080/chatbot/getAdminbyid/${editUserId}`);
+      const response = await axios.get(`${API_URL}/chatbot/getAdminbyid/${editUserId}`);
       const data = response.data;
       setEditRow({
         email: data.email,
@@ -43,7 +44,7 @@ const AddMember = ({rows, setRows, token,onCancel,editUserId}) => {
     }
   
     try {
-      const response = await fetch(`http://localhost:8080/chatbot/updateAdmin/${editUserId}`, {
+      const response = await fetch(`${API_URL}/chatbot/updateAdmin/${editUserId}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
@@ -89,7 +90,7 @@ const AddMember = ({rows, setRows, token,onCancel,editUserId}) => {
           return;
         }
         try {
-          const response = await fetch("http://localhost:8080/chatbot/invite", {
+          const response = await fetch(`${API_URL}/chatbot/invite`, {
             method: "POST",
             headers: {
               "Content-Type": "application/x-www-form-urlencoded",

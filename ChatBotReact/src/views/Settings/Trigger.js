@@ -3,6 +3,7 @@ import axios from 'axios';
 import TriggerList from './TriggerList'
 import TriggerAdd from './TriggerAdd'
 import { useLocation } from 'react-router-dom';
+import API_URL from '../../Config';
 
 
 const Trigger = () => {
@@ -35,7 +36,7 @@ const Trigger = () => {
   
   const fetchDepartments = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/chatbot/getAllDepartment')
+      const response = await axios.get(`${API_URL}/chatbot/getAllDepartment`)
       setDepartments(response.data)
     } catch (error) {
       console.error('Error fetching departments:', error)
@@ -45,7 +46,7 @@ const Trigger = () => {
 
   const fetchTriggers = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/chatbot/getAllTrigger');
+      const response = await axios.get(`${API_URL}/chatbot/getAllTrigger`);
       setGetTrigger(response.data);
     } catch (error) {
       console.error('Error fetching departments:', error);
@@ -55,7 +56,7 @@ const Trigger = () => {
 
   const fetchTriggerType = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/chatbot/getTriggerType')
+      const response = await axios.get(`${API_URL}/chatbot/getTriggerType`)
       setTriggerTypes(response.data)
     } catch (error) {
       console.error('error fetching triggertype', error)

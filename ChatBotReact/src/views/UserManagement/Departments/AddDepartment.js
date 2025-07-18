@@ -10,6 +10,7 @@ import {
   CCard,
   CCardText,
 } from '@coreui/react';
+import API_URL from '../../../Config';
 
 const AddDepartment = ({ department,setDepartment,token, users, onCancel, editDepId}) => {
 
@@ -24,7 +25,7 @@ const AddDepartment = ({ department,setDepartment,token, users, onCancel, editDe
   const fetchDepartment = async (editDepId) => {
    
     try {
-      const response = await axios.get(`http://localhost:8080/chatbot/getdep/${editDepId}`);
+      const response = await axios.get(`${API_URL}/chatbot/getdep/${editDepId}`);
       const data = response.data;
       setDepartment({
         depName: data.depName,
@@ -59,8 +60,8 @@ const AddDepartment = ({ department,setDepartment,token, users, onCancel, editDe
     e.preventDefault();
     try {
       const url = editDepId
-        ? `http://localhost:8080/chatbot/updatedepartment/${editDepId}`
-        : 'http://localhost:8080/chatbot/adddepartment';
+        ? `${API_URL}/chatbot/updatedepartment/${editDepId}`
+        : `${API_URL}/chatbot/adddepartment`;
   
       const method = editDepId ? 'patch' : 'post';
   

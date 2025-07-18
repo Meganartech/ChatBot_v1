@@ -14,6 +14,7 @@ import {
 } from "@coreui/react";
 import axios from "axios";
 import "./property.css";
+import API_URL from "../../../Config";
 
 const ProfileForm = () => {
   const [profileName, setProfileName] = useState("");
@@ -28,7 +29,7 @@ const ProfileForm = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const profileResponse = await axios.get("http://localhost:8080/api/profiles");
+        const profileResponse = await axios.get(`${API_URL}/api/profiles`);
         const profile = profileResponse.data;
         if (profile) {
           setProfileName(profile.name);
@@ -37,7 +38,7 @@ const ProfileForm = () => {
         }
         
         try {
-          const imageResponse = await axios.get("http://localhost:8080/api/profiles/image", {
+          const imageResponse = await axios.get(`${API_URL}/api/profiles/image`, {
             responseType: "blob",
           });
           if (imageResponse.data) {
@@ -75,7 +76,7 @@ const ProfileForm = () => {
 
   const cancelChanges = async () => {
     try {
-      const profileResponse = await axios.get("http://localhost:8080/api/profiles");
+      const profileResponse = await axios.get(`${API_URL}/api/profiles`);
       const profile = profileResponse.data;
       if (profile) {
         setProfileName(profile.name);
@@ -93,7 +94,7 @@ const ProfileForm = () => {
       }
 
       try {
-        const imageResponse = await axios.get("http://localhost:8080/api/profiles/image", {
+        const imageResponse = await axios.get(`${API_URL}/api/profiles/image`, {
           responseType: "blob",
         });
         if (imageResponse.data) {
@@ -124,7 +125,7 @@ const ProfileForm = () => {
     }
 
     try {
-      const response = await axios.post("http://localhost:8080/api/profiles", formData, {
+      const response = await axios.post(`${API_URL}/api/profiles`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -140,7 +141,7 @@ const ProfileForm = () => {
       setIsImageCleared(false);
 
       try {
-        const imageResponse = await axios.get("http://localhost:8080/api/profiles/image", {
+        const imageResponse = await axios.get(`${API_URL}/api/profiles/image`, {
           responseType: "blob",
         });
         if (imageResponse.data) {

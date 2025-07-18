@@ -12,14 +12,14 @@ public class MessageDisplay {
 	private String receivername;
 	private String adminemail;
     private String Message;
+    private boolean Status;
 	private LocalDateTime timestamp;
 	public MessageDisplay() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-	
 	public MessageDisplay(String sessionId, long userid, String username, String useremail, long adminid,
-			String receivername, String adminemail, String message, LocalDateTime timestamp) {
+			String receivername, String adminemail, String message, boolean status, LocalDateTime timestamp) {
 		super();
 		this.sessionId = sessionId;
 		this.userid = userid;
@@ -29,9 +29,9 @@ public class MessageDisplay {
 		this.receivername = receivername;
 		this.adminemail = adminemail;
 		Message = message;
+		Status = status;
 		this.timestamp = timestamp;
 	}
-
 	public String getSessionId() {
 		return sessionId;
 	}
@@ -74,23 +74,23 @@ public class MessageDisplay {
 	public void setTimestamp(LocalDateTime timestamp) {
 		this.timestamp = timestamp;
 	}
-
 	public String getUseremail() {
 		return useremail;
 	}
-
 	public void setUseremail(String useremail) {
 		this.useremail = useremail;
 	}
-
 	public String getAdminemail() {
 		return adminemail;
 	}
-
 	public void setAdminemail(String adminemail) {
 		this.adminemail = adminemail;
 	}
-	
-	
+	public boolean isStatus() {
+		return Status;
+	}
+	public void setStatus(boolean status) {
+		Status = status;
+	}
 
 }

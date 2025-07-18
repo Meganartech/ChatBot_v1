@@ -20,6 +20,7 @@ import {
 } from '@coreui/react'
 import { FaSearch, FaPlus } from 'react-icons/fa'
 import { FaEdit, FaTrash } from 'react-icons/fa'; // Import the icons
+import API_URL from "../../../Config";
 
 const DepartmentList = ({refreshDepartment,departments,token,onAddDepClick,Edit}) => {
 
@@ -46,7 +47,7 @@ const DepartmentList = ({refreshDepartment,departments,token,onAddDepClick,Edit}
   
   const handleDelete = async (depId) => {
     try{
-      const response = await axios.delete(`http://localhost:8080/chatbot/deleteDep/${depId}`,{
+      const response = await axios.delete(`${API_URL}/chatbot/deleteDep/${depId}`,{
         headers:{
           Authorization: token,
         }

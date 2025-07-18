@@ -3,6 +3,7 @@ import WidgetSidebar from "./WidgetSidebar";
 import WidgetBody from "./WidgetBody";
 import ChatWidget from "./ChatWidget";
 import WidgetContent from "./WidgetContent";
+import API_URL from "../../../Config";
 const Channels = () => {
   const styles = {
     adminContainer: {
