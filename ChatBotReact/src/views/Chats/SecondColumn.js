@@ -251,12 +251,12 @@ const SecondColumn = ({ onUserSelect, currentAdminEmail, onGridClick }) => {
               />
               <div style={{ flexGrow: 1 }}>
                 <div className="fw-semibold text-truncate" title={room.username}>
-                  {room.username?.length > 10 ? room.username.slice(0, 10) + '...' : room.username}
+                  {room.username?.length > 8 ? room.username.slice(0, 8) + '...' : room.username}
                 </div>
                 <div className="text-muted small text-truncate" title={room.message}>
                   {room.message
-                    ? room.message.length > 15
-                      ? room.message.slice(0, 15) + '...'
+                    ? room.message.length > 11
+                      ? room.message.slice(0, 11) + '...'
                       : room.message
                     : 'No message'}
                 </div>
