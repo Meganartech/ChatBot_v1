@@ -25,6 +25,7 @@ import {
   cilAccountLogout,
   cilUser,
 } from '@coreui/icons'
+import API_URL from '../Config' // Ensure this path is correct
 
 const AppHeader = () => {
   const headerRef = useRef()
@@ -43,7 +44,7 @@ const AppHeader = () => {
 
       // Prefix image path with backend URL if necessary
       if (parsedAdmin.image_path && !parsedAdmin.image_path.startsWith('http')) {
-        parsedAdmin.imageUrl = `http://localhost:8080/${parsedAdmin.image_path}`
+        parsedAdmin.imageUrl = `${API_URL}/${parsedAdmin.image_path}`
         
       }
 
@@ -71,7 +72,7 @@ const AppHeader = () => {
     try {
       const token = localStorage.getItem("token")
       if (token) {
-        await fetch("http://localhost:8080/auth/logout", {
+        await fetch(`${API_URL}/auth/logout`, {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -149,7 +150,7 @@ const AppHeader = () => {
             <CDropdownToggle caret={false} className="d-flex align-items-center">
     {admin?.image_path ? (
   <img
-    src={`http://localhost:8080/${admin.image_path}`}
+    src={`${API_URL}/${admin.image_path}`}
     alt="profile"
     style={{
       width: '32px',

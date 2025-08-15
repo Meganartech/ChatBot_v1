@@ -1,8 +1,8 @@
 // api.js
-
+import API_URL from './config';
 export const getMessages = async () => {
     try {
-      const response = await fetch('http://localhost:8080/chat/messages');
+      const response = await fetch(`${API_URL}/chat/messages`);
       const data = await response.json();
       return data;
     } catch (error) {
@@ -12,7 +12,7 @@ export const getMessages = async () => {
   
   export const sendMessage = async (message) => {
     try {
-      await fetch('http://localhost:8080/chat/send', {
+      await fetch(`${API_URL}/chat/send`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

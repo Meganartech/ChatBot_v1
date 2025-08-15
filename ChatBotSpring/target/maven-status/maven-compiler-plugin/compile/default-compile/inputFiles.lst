@@ -1,35 +1,52 @@
-C:\Users\ArunBabuSubramanian\Desktop\ALL PROJECTS\Meganar Chatbot\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\WidgetController\WidgetController.java
-C:\Users\ArunBabuSubramanian\Desktop\ALL PROJECTS\Meganar Chatbot\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\ChatSpringApplication.java
-C:\Users\ArunBabuSubramanian\Desktop\ALL PROJECTS\Meganar Chatbot\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\WidgetController\ReqRes\UserAuth.java
-C:\Users\ArunBabuSubramanian\Desktop\ALL PROJECTS\Meganar Chatbot\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\WidgetController\ReqRes\UserAuthService.java
-C:\Users\ArunBabuSubramanian\Desktop\ALL PROJECTS\Meganar Chatbot\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\Admin\AdminRegisterController.java
-C:\Users\ArunBabuSubramanian\Desktop\ALL PROJECTS\Meganar Chatbot\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\DataInitializer.java
-C:\Users\ArunBabuSubramanian\Desktop\ALL PROJECTS\Meganar Chatbot\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\WidgetController\ReqRes\UserLogin.java
-C:\Users\ArunBabuSubramanian\Desktop\ALL PROJECTS\Meganar Chatbot\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\Admin\AdminUserDto.java
-C:\Users\ArunBabuSubramanian\Desktop\ALL PROJECTS\Meganar Chatbot\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\WidgetController\ChatbotType.java
-C:\Users\ArunBabuSubramanian\Desktop\ALL PROJECTS\Meganar Chatbot\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\Admin\RoleRepository.java
-C:\Users\ArunBabuSubramanian\Desktop\ALL PROJECTS\Meganar Chatbot\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\WidgetController\ReqRes\UserRegister.java
-C:\Users\ArunBabuSubramanian\Desktop\ALL PROJECTS\Meganar Chatbot\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\WidgetController\PropertyController.java
-C:\Users\ArunBabuSubramanian\Desktop\ALL PROJECTS\Meganar Chatbot\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\MailConfiguration\EmailService.java
-C:\Users\ArunBabuSubramanian\Desktop\ALL PROJECTS\Meganar Chatbot\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\OpenApiConfig.java
-C:\Users\ArunBabuSubramanian\Desktop\ALL PROJECTS\Meganar Chatbot\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\TokenGeneration\TokenBlacklist.java
-C:\Users\ArunBabuSubramanian\Desktop\ALL PROJECTS\Meganar Chatbot\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\WidgetController\ChatBoxController.java
-C:\Users\ArunBabuSubramanian\Desktop\ALL PROJECTS\Meganar Chatbot\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\Departments\DepartmentRequestDto.java
-C:\Users\ArunBabuSubramanian\Desktop\ALL PROJECTS\Meganar Chatbot\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\WidgetController\PropertyService.java
-C:\Users\ArunBabuSubramanian\Desktop\ALL PROJECTS\Meganar Chatbot\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\Departments\DepartmentController.java
-C:\Users\ArunBabuSubramanian\Desktop\ALL PROJECTS\Meganar Chatbot\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\Departments\DepartmentRepository.java
-C:\Users\ArunBabuSubramanian\Desktop\ALL PROJECTS\Meganar Chatbot\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\FrontController.java
-C:\Users\ArunBabuSubramanian\Desktop\ALL PROJECTS\Meganar Chatbot\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\WidgetController\ReqRes\UserAuthController.java
-C:\Users\ArunBabuSubramanian\Desktop\ALL PROJECTS\Meganar Chatbot\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\WidgetController\ReqRes\UserRepo.java
-C:\Users\ArunBabuSubramanian\Desktop\ALL PROJECTS\Meganar Chatbot\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\WidgetController\ReqRes\User.java
-C:\Users\ArunBabuSubramanian\Desktop\ALL PROJECTS\Meganar Chatbot\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\Departments\Department.java
-C:\Users\ArunBabuSubramanian\Desktop\ALL PROJECTS\Meganar Chatbot\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\WidgetController\Property.java
-C:\Users\ArunBabuSubramanian\Desktop\ALL PROJECTS\Meganar Chatbot\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\WidgetController\SecurityConfig.java
-C:\Users\ArunBabuSubramanian\Desktop\ALL PROJECTS\Meganar Chatbot\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\Admin\AdminRegister.java
-C:\Users\ArunBabuSubramanian\Desktop\ALL PROJECTS\Meganar Chatbot\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\Departments\DepartmentSummaryDto.java
-C:\Users\ArunBabuSubramanian\Desktop\ALL PROJECTS\Meganar Chatbot\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\Admin\Role.java
-C:\Users\ArunBabuSubramanian\Desktop\ALL PROJECTS\Meganar Chatbot\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\TokenGeneration\JwtConfig.java
-C:\Users\ArunBabuSubramanian\Desktop\ALL PROJECTS\Meganar Chatbot\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\ServletInitializer.java
-C:\Users\ArunBabuSubramanian\Desktop\ALL PROJECTS\Meganar Chatbot\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\Admin\AdminRegisterRepository.java
-C:\Users\ArunBabuSubramanian\Desktop\ALL PROJECTS\Meganar Chatbot\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\TokenGeneration\JwtUtil.java
-C:\Users\ArunBabuSubramanian\Desktop\ALL PROJECTS\Meganar Chatbot\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\WidgetController\PropertyRepo.java
+C:\Users\ArunBabuSubramanian\Desktop\HOST CHATS\HOST\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\CorsConfig.java
+C:\Users\ArunBabuSubramanian\Desktop\HOST CHATS\HOST\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\Departments\Department.java
+C:\Users\ArunBabuSubramanian\Desktop\HOST CHATS\HOST\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\ProfileOverview\WebConfig.java
+C:\Users\ArunBabuSubramanian\Desktop\HOST CHATS\HOST\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\ServletInitializer.java
+C:\Users\ArunBabuSubramanian\Desktop\HOST CHATS\HOST\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\Admin\AdminRegisterRepository.java
+C:\Users\ArunBabuSubramanian\Desktop\HOST CHATS\HOST\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\OpenApiConfig.java
+C:\Users\ArunBabuSubramanian\Desktop\HOST CHATS\HOST\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\Departments\DepartmentRepository.java
+C:\Users\ArunBabuSubramanian\Desktop\HOST CHATS\HOST\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\ProfileOverview\ProfileRepository.java
+C:\Users\ArunBabuSubramanian\Desktop\HOST CHATS\HOST\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\Departments\DepartmentSummaryDto.java
+C:\Users\ArunBabuSubramanian\Desktop\HOST CHATS\HOST\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\Trigger\TriggerRequestDto.java
+C:\Users\ArunBabuSubramanian\Desktop\HOST CHATS\HOST\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\Chat\ChatSessionController.java
+C:\Users\ArunBabuSubramanian\Desktop\HOST CHATS\HOST\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\Trigger\TextOption.java
+C:\Users\ArunBabuSubramanian\Desktop\HOST CHATS\HOST\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\ScriptGenerate\ScriptGeneratorRepository.java
+C:\Users\ArunBabuSubramanian\Desktop\HOST CHATS\HOST\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\UserInfo\UserService.java
+C:\Users\ArunBabuSubramanian\Desktop\HOST CHATS\HOST\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\ScriptGenerate\ScriptGenerate.java
+C:\Users\ArunBabuSubramanian\Desktop\HOST CHATS\HOST\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\Admin\Role.java
+C:\Users\ArunBabuSubramanian\Desktop\HOST CHATS\HOST\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\Trigger\Trigger.java
+C:\Users\ArunBabuSubramanian\Desktop\HOST CHATS\HOST\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\UserInfo\UserInfoRepository.java
+C:\Users\ArunBabuSubramanian\Desktop\HOST CHATS\HOST\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\Chat\MessageDTO.java
+C:\Users\ArunBabuSubramanian\Desktop\HOST CHATS\HOST\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\ProfileOverview\Profile.java
+C:\Users\ArunBabuSubramanian\Desktop\HOST CHATS\HOST\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\Chat\ChatSession.java
+C:\Users\ArunBabuSubramanian\Desktop\HOST CHATS\HOST\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\ScriptGenerate\AppearanceDto.java
+C:\Users\ArunBabuSubramanian\Desktop\HOST CHATS\HOST\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\Admin\AdminUserDto.java
+C:\Users\ArunBabuSubramanian\Desktop\HOST CHATS\HOST\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\ProfileOverview\ProfileController.java
+C:\Users\ArunBabuSubramanian\Desktop\HOST CHATS\HOST\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\Chat\SessionDisplayDTO.java
+C:\Users\ArunBabuSubramanian\Desktop\HOST CHATS\HOST\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\TokenGeneration\JwtUtil.java
+C:\Users\ArunBabuSubramanian\Desktop\HOST CHATS\HOST\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\Trigger\Triggertype.java
+C:\Users\ArunBabuSubramanian\Desktop\HOST CHATS\HOST\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\Trigger\SetDepartment.java
+C:\Users\ArunBabuSubramanian\Desktop\HOST CHATS\HOST\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\Trigger\TextOptionRepository.java
+C:\Users\ArunBabuSubramanian\Desktop\HOST CHATS\HOST\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\Chat\ChatMessage.java
+C:\Users\ArunBabuSubramanian\Desktop\HOST CHATS\HOST\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\Trigger\TriggerTypeRepository.java
+C:\Users\ArunBabuSubramanian\Desktop\HOST CHATS\HOST\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\DataInitializer.java
+C:\Users\ArunBabuSubramanian\Desktop\HOST CHATS\HOST\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\Trigger\SetDepartmentRepository.java
+C:\Users\ArunBabuSubramanian\Desktop\HOST CHATS\HOST\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\Chat\ChatMessageRepository.java
+C:\Users\ArunBabuSubramanian\Desktop\HOST CHATS\HOST\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\Chat\ChatWebSocketController.java
+C:\Users\ArunBabuSubramanian\Desktop\HOST CHATS\HOST\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\Admin\AdminRegister.java
+C:\Users\ArunBabuSubramanian\Desktop\HOST CHATS\HOST\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\UserInfo\UserInfo.java
+C:\Users\ArunBabuSubramanian\Desktop\HOST CHATS\HOST\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\FrontController.java
+C:\Users\ArunBabuSubramanian\Desktop\HOST CHATS\HOST\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\MailConfiguration\EmailService.java
+C:\Users\ArunBabuSubramanian\Desktop\HOST CHATS\HOST\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\Admin\RoleRepository.java
+C:\Users\ArunBabuSubramanian\Desktop\HOST CHATS\HOST\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\ChatSpringApplication.java
+C:\Users\ArunBabuSubramanian\Desktop\HOST CHATS\HOST\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\Departments\DepartmentRequestDto.java
+C:\Users\ArunBabuSubramanian\Desktop\HOST CHATS\HOST\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\Chat\ChatSessionRepository.java
+C:\Users\ArunBabuSubramanian\Desktop\HOST CHATS\HOST\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\Trigger\TriggerRepository.java
+C:\Users\ArunBabuSubramanian\Desktop\HOST CHATS\HOST\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\ScriptGenerate\ScriptGenerateController.java
+C:\Users\ArunBabuSubramanian\Desktop\HOST CHATS\HOST\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\WebSocketConfig\WebSocketConfig.java
+C:\Users\ArunBabuSubramanian\Desktop\HOST CHATS\HOST\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\Trigger\TriggerController.java
+C:\Users\ArunBabuSubramanian\Desktop\HOST CHATS\HOST\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\Chat\MessageDisplay.java
+C:\Users\ArunBabuSubramanian\Desktop\HOST CHATS\HOST\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\TokenGeneration\TokenBlacklist.java
+C:\Users\ArunBabuSubramanian\Desktop\HOST CHATS\HOST\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\Admin\AdminRegisterController.java
+C:\Users\ArunBabuSubramanian\Desktop\HOST CHATS\HOST\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\TokenGeneration\JwtConfig.java
+C:\Users\ArunBabuSubramanian\Desktop\HOST CHATS\HOST\ChatBot_v1\ChatBotSpring\src\main\java\com\VsmartEngine\Chatbot\Departments\DepartmentController.java

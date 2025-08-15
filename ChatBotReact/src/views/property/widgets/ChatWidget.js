@@ -293,7 +293,7 @@ import {
   CFormInput,
 } from "@coreui/react";
 import { useNavigate } from "react-router-dom";
-import API_URL from '../../../Config';
+import API_URL from "../../../Config";
 
 
 const WidgetForm = () => {

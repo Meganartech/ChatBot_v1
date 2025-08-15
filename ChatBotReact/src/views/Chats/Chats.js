@@ -63,7 +63,7 @@
 // export default Chats
 
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { CCard, CCardBody, CButton } from '@coreui/react'
 import FirstColumn from './FirstColumn'
 import SecondColumn from './SecondColumn'
@@ -83,6 +83,7 @@ const Chats = () => {
   const [showGridTable, setShowGridTable] = useState(false)
   const [showJoinPrompt, setShowJoinPrompt] = useState(false)
   const [chatJoined, setChatJoined] = useState(false)
+  const [unreadCountsBySessionId, setUnreadCountsBySessionId] = useState({})
 
   const handleUserSelect = (user) => {
     setSelectedUser(user)
@@ -93,12 +94,54 @@ const Chats = () => {
   const handleJoinChat = () => {
     setChatJoined(true)
     setShowJoinPrompt(false)
+    if (selectedUser?.sessionId) {
+      setUnreadCountsBySessionId((prev) => ({
+        ...prev,
+        [selectedUser.sessionId]: 0,
+      }))
+    }
   }
 
   const handleRejectChat = () => {
     setSelectedUser(null)
     setShowJoinPrompt(false)
     setChatJoined(false)
+  }
+
+  const handleIncomingUserMessage = (sessionId) => {
+    if (!sessionId) return
+    // If not joined, increment unread for that session
+    if (!chatJoined || selectedUser?.sessionId !== sessionId) {
+      setUnreadCountsBySessionId((prev) => ({
+        ...prev,
+        [sessionId]: (prev[sessionId] || 0) + 1,
+      }))
+    }
+  }
+
+  // When joined and viewing a session, mark as read in backend
+  useEffect(() => {
+    const markRead = async () => {
+      if (chatJoined && selectedUser?.sessionId) {
+        try {
+          await fetch(`${API_URL}/sessions/${selectedUser.sessionId}/markRead`, {
+            method: 'PUT',
+          })
+          setUnreadCountsBySessionId((prev) => ({
+            ...prev,
+            [selectedUser.sessionId]: 0,
+          }))
+        } catch (e) {
+          // ignore
+        }
+      }
+    }
+    markRead()
+  }, [chatJoined, selectedUser?.sessionId])
+
+  const handleUnreadSync = (mapFromServer) => {
+    if (!mapFromServer) return
+    setUnreadCountsBySessionId((prev) => ({ ...prev, ...mapFromServer }))
   }
 
   return (
@@ -123,6 +166,9 @@ const Chats = () => {
                 currentAdminEmail={adminEmail}
                 onUserSelect={handleUserSelect}
                 onGridClick={() => setShowGridTable(true)}
+                unreadCounts={unreadCountsBySessionId}
+                onUnreadSync={handleUnreadSync}
+                onIncomingUserMessage={handleIncomingUserMessage}
               />
 
               {/* Third Column (chat window) */}
@@ -137,6 +183,7 @@ const Chats = () => {
                 status={selectedUser?.status}
                 adminId={adminId}
                 chatJoined={chatJoined}
+                onIncomingUserMessage={handleIncomingUserMessage}
               />
             </>
           )}

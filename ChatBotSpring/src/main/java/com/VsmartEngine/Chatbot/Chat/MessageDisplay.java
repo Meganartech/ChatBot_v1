@@ -14,6 +14,7 @@ public class MessageDisplay {
     private String Message;
     private boolean Status;
 	private LocalDateTime timestamp;
+    private long unreadCount;
 	public MessageDisplay() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -32,6 +33,12 @@ public class MessageDisplay {
 		Status = status;
 		this.timestamp = timestamp;
 	}
+    public long getUnreadCount() {
+        return unreadCount;
+    }
+    public void setUnreadCount(long unreadCount) {
+        this.unreadCount = unreadCount;
+    }
 	public String getSessionId() {
 		return sessionId;
 	}

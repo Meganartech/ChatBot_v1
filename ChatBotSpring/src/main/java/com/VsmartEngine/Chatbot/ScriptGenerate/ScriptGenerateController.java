@@ -555,14 +555,14 @@ public class ScriptGenerateController {
                     StringBuilder welcomeMessages = new StringBuilder();
                     for (String item : trigger.getFirstTrigger()) {
                         switch (item) {
-                            case "Text Area" -> {
-                                if (trigger.getTextOption() != null) {
-                                    String textMessage = escapeHtml(trigger.getTextOption().getText());
-                                    welcomeMessages.append("<div style=\"background-color:")
-                                            .append(buttonColor).append("; color:white; max-width:85%; font-size:14px; padding:10px; border-radius:5px; margin-bottom:5px;\">")
-                                            .append(textMessage).append("</div>");
-                                }
-                            }
+                            // case "Text Area" -> {
+                            //     if (trigger.getTextOption() != null) {
+                            //         String textMessage = escapeHtml(trigger.getTextOption().getText());
+                            //         welcomeMessages.append("<div style=\"background-color:")
+                            //                 .append(buttonColor).append("; color:white; max-width:85%; font-size:14px; padding:10px; border-radius:5px; margin-bottom:5px;\">")
+                            //                 .append(textMessage).append("</div>");
+                            //     }
+                            // }
                             case "Department" -> {
                                 if (!trigger.getDepartments().isEmpty()) {
                                     welcomeMessages.append("<p style='font-weight:bold;'>Set your categories</p>");

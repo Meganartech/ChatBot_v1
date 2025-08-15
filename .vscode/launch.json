@@ -2,6 +2,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "ChatSpringApplication",
+            "request": "launch",
+            "mainClass": "com.VsmartEngine.Chatbot.ChatSpringApplication",
+            "projectName": "ChatBot"
+        },
+        {
+            "type": "java",
             "name": "Spring Boot-LiveChatApplication<LiveChat>",
             "request": "launch",
             "cwd": "${workspaceFolder}",

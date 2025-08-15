@@ -19,6 +19,9 @@ public class ChatSession {
     private String receiver; // admin email or ID
     private boolean Status;
 
+    // Last time the admin viewed this session. Used to calculate pending/unread messages
+    private LocalDateTime lastAdminReadAt;
+
     private LocalDateTime createdTime;
 
 	public ChatSession() {
@@ -88,5 +91,11 @@ public class ChatSession {
 	public void setStatus(boolean status) {
 		Status = status;
 	}
+    public LocalDateTime getLastAdminReadAt() {
+        return lastAdminReadAt;
+    }
+    public void setLastAdminReadAt(LocalDateTime lastAdminReadAt) {
+        this.lastAdminReadAt = lastAdminReadAt;
+    }
 	
 }

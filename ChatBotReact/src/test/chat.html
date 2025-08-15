@@ -127,7 +127,7 @@
     </style>
     
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
+<scipt src="config.js"></script>
 </head>
 <body class="bg-light">
    
@@ -240,7 +240,7 @@
                 return;
             }
 
-            fetch("http://localhost:8080/user/auth/register", {
+            fetch(`${API_URL}/user/auth/register`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ username, password, propertyId })
@@ -270,7 +270,7 @@
                 return;
             }
 
-            fetch("http://localhost:8080/user/auth/login", {
+            fetch(`${API_URL}/user/auth/login`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ username, password, propertyId })
@@ -317,7 +317,7 @@
 	        // Fetch chatbot type from local storage or API (if stored separately)
 	        const chatbotType = type; 
 	
-	        const response = await fetch("http://localhost:8080/chat/send", {
+	        const response = await fetch(`${API_URL}/chat/send`, {
 	            method: "POST",
 	            headers: {
 	                "Content-Type": "application/json",
@@ -362,8 +362,8 @@ async function fetchMessages() {
         }
 
         // Define API URLs
-        const sentMessagesUrl = `http://localhost:8080/chat/${propertyId}/sent/${receiver}`;
-        const receivedMessagesUrl = `http://localhost:8080/chat/${propertyId}/${receiver}/received`;
+        const sentMessagesUrl = `${API_URL}/chat/${propertyId}/sent/${receiver}`;
+        const receivedMessagesUrl = `${API_URL}/chat/${propertyId}/${receiver}/received`;
 
         // Fetch sent & received messages in parallel
         const [sentRes, receivedRes] = await Promise.all([
@@ -464,7 +464,7 @@ function fetchAnswer(propertyId, questionText) {
 
     console.log(`Fetching Answer for Question: "${questionText}", Property ID: ${propertyId}`);
 
-    fetch("http://localhost:8080/questions/answer", {
+    fetch(`${API_URL}/questions/answer`, {
         method: "POST",
         headers: {
             "Authorization": `Bearer ${authToken}`,

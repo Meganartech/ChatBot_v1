@@ -42,6 +42,8 @@ public class AdminRegisterController {
 	@Value("${UserOrigin}")
     private String frontendOrigin;
 	
+	@Value("${AdminOrigin}")
+    private String messageOrigin;
 	@Autowired
 	private AdminRegisterRepository adminregisterrepository;
 	
@@ -283,7 +285,7 @@ public class AdminRegisterController {
 	        newUser.setStatus(false);
 	        newUser.setCode(UUID.randomUUID().toString());
         
-        String link = "http://localhost:3000/#/register?token=" + newUser.getCode();
+        String link = messageOrigin + "/#/register?token=" + newUser.getCode();
         String subject = "You have been invited to join";
         String body = "Hi,\n\nYou have been invited to join. Click the link below to register:\n\n" + 
                       link + "\n\n-chatbot  Team";

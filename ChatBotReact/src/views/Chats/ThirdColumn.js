@@ -209,7 +209,7 @@ import {
 import { cilXCircle, cilBan, cilTask } from '@coreui/icons'
 import API_URL from '../../Config'
 
-const ThirdColumn = ({ sessionId, UserName, adminEmail, useremail, chatJoined,status }) => {
+const ThirdColumn = ({ sessionId, UserName, adminEmail, useremail, chatJoined, status, onIncomingUserMessage }) => {
   const [messages, setMessages] = useState([])
   const [inputMsg, setInputMsg] = useState('')
   const messagesEndRef = useRef(null)
@@ -221,10 +221,16 @@ const ThirdColumn = ({ sessionId, UserName, adminEmail, useremail, chatJoined,st
 
     const client = new Client({
       webSocketFactory: () => new SockJS(`${API_URL}/chat`),
+      reconnectDelay: 5000,
+      heartbeatIncoming: 10000,
+      heartbeatOutgoing: 10000,
       onConnect: () => {
         client.subscribe(`/topic/messages/${sessionId}`, (msg) => {
           const message = JSON.parse(msg.body)
           setMessages((prev) => [...prev, message])
+          if (message?.role === 'USER' && typeof onIncomingUserMessage === 'function') {
+            onIncomingUserMessage(sessionId)
+          }
         })
       },
       debug: (str) => console.log(str),
@@ -312,19 +318,19 @@ const ThirdColumn = ({ sessionId, UserName, adminEmail, useremail, chatJoined,st
       {/* Header */}
       <CCardHeader className="d-flex justify-content-between align-items-center px-3 py-2">
   <div className="d-flex align-items-center">
-    <img
-      src={img}
-      alt="User"
-      className="rounded-circle"
-      style={{ width: '40px', height: '40px', objectFit: 'cover' }}
-    />
-    <div className="ms-2">
-      <div className="fw-semibold">{UserName}</div>
-      <div className="text-success small">
-        {chatJoined ? 'Online' : 'Waiting to Join'}
-      </div>
+  <div
+    className="rounded-circle d-flex align-items-center justify-content-center bg-primary text-white"
+    style={{ width: '40px', height: '40px', fontWeight: 'bold', fontSize: '18px' }}
+  >
+    {UserName ? UserName.charAt(0).toUpperCase() : ''}
+  </div>
+  <div className="ms-2">
+    <div className="fw-semibold">{UserName}</div>
+    <div className="text-success small">
+      {chatJoined ? 'Online' : 'Waiting to Join'}
     </div>
   </div>
+</div>
 
   <div className="d-flex align-items-center gap-5">
     <div className="d-flex align-items-center border rounded px-2">
@@ -372,11 +378,11 @@ const ThirdColumn = ({ sessionId, UserName, adminEmail, useremail, chatJoined,st
           <div
             className="d-flex flex-column justify-content-center align-items-center h-100 text-muted"
           >
-            <img
+            {/* <img
               src={chatimage}
               alt="Join Prompt"
               style={{ width: '120px', height: '120px', marginBottom: '1rem', opacity: 0.6 }}
-            />
+            /> */}
             <div>Please click <strong>"Join"</strong> to view chat</div>
           </div>
         ) : messages.length === 0 ? (
@@ -454,7 +460,7 @@ const ThirdColumn = ({ sessionId, UserName, adminEmail, useremail, chatJoined,st
           }}
           disabled={!chatJoined || status}
         />
-        <CButton color="primary" onClick={sendMessage} disabled={!chatJoined}>
+        <CButton color="primary" onClick={sendMessage} disabled={!chatJoined || status}>
           ➤
         </CButton>
       </div>
